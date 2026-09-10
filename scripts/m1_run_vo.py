@@ -11,6 +11,7 @@
     figs/trajectory.png     轨迹对比（XY + 三轴随时间）
     figs/diagnostics.png    每帧诊断曲线（M3 失效归因的数据源）
     figs/ate_curve.png      ATE 随时间的漂移
+    figs/trajectory_ba.png 局部 BA 前后轨迹对比（加 --ba 时生成）
     metrics.json            量化结果
     README.md               结论与反思
 """
@@ -62,6 +63,8 @@ def parse_args():
     p.add_argument("--max-features", type=int, default=3000)
     p.add_argument("--use-depth", action="store_true",
                    help="用深度图定尺度（RGB-D 模式；否则单目，需 Sim3 对齐）")
+    p.add_argument("--ba", action="store_true",
+                   help="跑完 VO 后追加局部 BA 重优化（消除累积漂移，通常显著降 ATE）")
     p.add_argument("--out", default=None)
     return p.parse_args()
 
@@ -189,6 +192,41 @@ def main():
         plt.tight_layout()
         plt.savefig(f"{out_dir}/figs/ate_curve.png", dpi=130)
         plt.close()
+
+        # -------- 可选：局部 BA 精修（消除累积漂移）--------
+        metrics["ba"] = {"enabled": bool(args.ba)}
+        if args.ba:
+            ba_info = vo.refine(max_iter=20, verbose=False)
+            metrics["ba"].update({k: v for k, v in ba_info.items()})
+            if ba_info.get("status") == "ok":
+                est_after = vo.trajectory()
+                est_after_e = est_after[start:]
+                m_a = min(len(est_after_e), len(gt_e))
+                est_after_e = est_after_e[:m_a]
+                aligned_after, _ = align_trajectory(est_after_e, gt_e[:m_a], allow_scale)
+                ate_after = compute_ate(est_after_e, gt_e[:m_a], allow_scale=allow_scale)
+                metrics["ate_after"] = {k: v for k, v in ate_after.items()}
+
+                rb, ra = ba_info.get("rmse_before"), ba_info.get("rmse_after")
+                print(f"\n[BA] 重投影 RMSE: {rb:.3f} → {ra:.3f} px")
+                print(f"[BA] ATE  RMSE   : {ate['rmse']:.4f} → {ate_after['rmse']:.4f} m")
+
+                # 图4：BA 前后轨迹对比（俯视 X-Z）
+                fig, ax = plt.subplots(figsize=(7, 6))
+                ax.plot(gt_e[:m_a, 0], gt_e[:m_a, 2], "k-", linewidth=2, label="真值")
+                ax.plot(aligned[:m_a, 0], aligned[:m_a, 2], "b--", linewidth=1.4,
+                        label=f"BA 前 (ATE={ate['rmse']:.3f}m)")
+                ax.plot(aligned_after[:, 0], aligned_after[:, 2], "r-", linewidth=1.4,
+                        label=f"BA 后 (ATE={ate_after['rmse']:.3f}m)")
+                ax.set_xlabel("X (m)"); ax.set_ylabel("Z (m)")
+                ax.set_title("局部 BA 前后轨迹对比（俯视 X-Z）", fontsize=12)
+                ax.legend(); ax.axis("equal")
+                plt.tight_layout()
+                plt.savefig(f"{out_dir}/figs/trajectory_ba.png", dpi=130)
+                plt.close()
+            else:
+                print(f"[BA] 跳过：{ba_info.get('status')}")
+
         metrics["ate_curve_mean"] = float(np.mean(err_t))
     else:
         print("[!] 无真值，跳过评估")
@@ -225,7 +263,8 @@ def main():
         json.dump(metrics, f, indent=2, ensure_ascii=False)
 
     print(f"\n[✓] 产出目录: {out_dir}")
-    print("    figs/trajectory.png  figs/diagnostics.png  figs/ate_curve.png  metrics.json")
+    print("    figs/trajectory.png  figs/diagnostics.png  figs/ate_curve.png"
+          + ("  figs/trajectory_ba.png" if args.ba else "") + "  metrics.json")
     return 0
 
 

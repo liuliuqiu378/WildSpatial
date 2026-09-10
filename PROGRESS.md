@@ -2,7 +2,7 @@
 
 > **AI 助手必读**：每次进入项目，先读本文件。
 > 更新规则：**完成任何一步后立刻追加**，不要等收尾。格式见底部模板。
-> 当前阶段：`M1 - 手搓 SfM/VO`（进行中；M0 已完成）
+> 当前阶段：`M1 - 手搓 SfM/VO`（前端完成 + BA 已接入 VO；长序列 ATE 完整评测进行中）
 >
 > ⚠️ **AI 行为约定（血泪教训）**：**永远不要阻塞等待后台任务**（下载/安装）。
 > 本系统网络很慢（TUM 单连接 ~0.3MB/s，torch 依赖下了 1 小时+）。
@@ -26,8 +26,9 @@
 ### 常用命令
 ```bash
 cd /home/hmn-cjy/liuliuqiu/WildSpatial
-PYTHONPATH=src python -m pytest tests/ -q          # 自检（wildspatial 环境）
-PYTHONPATH=src python scripts/m0_demo.py            # M0 可视化
+PYTHONPATH=src python -m pytest tests/ -q          # 自检（wildspatial 环境）→ 当前 53 passed
+PYTHONPATH=src python scripts/m0_demo.py            # M0 可视化（6 张图）
+PYTHONPATH=src python scripts/m1_run_vo.py --seq fr1/desk --frames 450 --stride 3   # M1 跑真实数据
 # 多线程下载（比 curl 快数倍）
 PYTHONPATH=src python -m wildspatial.data.download <url> <out> --workers 12
 ```
@@ -37,8 +38,12 @@ PYTHONPATH=src python -m wildspatial.data.download <url> <out> --workers 12
 项目根        /home/hmn-cjy/liuliuqiu/WildSpatial
 原始数据      <root>/data/raw
 预处理数据    <root>/data/processed
-实验产出      <root>/experiments/<module>/<exp_name>/
+实验产出      <root>/experiments/<module>/<exp_name>/   （含 README + metrics.json + figs/）
+GitHub 仓库   https://github.com/liuliuqiu378/WildSpatial  （已 git init，首个 commit c46fa48 已 push 到 main）
 ```
+
+> **推送约定**：远程 `origin` 用干净 URL（不含 token）；push 时临时内联 token，避免泄露进 `.git/config`。
+> **`.gitignore` 已排除** `data/`、`.codebuddy/`、`.pyc`、`*.tgz`；`experiments/figs/` 的图**必须**进仓库（docs 用相对路径引用）。
 
 ---
 
@@ -60,7 +65,7 @@ PYTHONPATH=src python -m wildspatial.data.download <url> <out> --workers 12
 | # | Module | 主题 | 状态 | 核心产出 |
 |---|---|---|---|---|
 | M0 | 几何地基 | 相机模型 / 李群 / 对极几何 / 三角化 / PnP | ✅ 完成 | 几何库 + 25 项自检 + 6 张教学图 |
-| M1 | 手搓 SfM/VO | SIFT→匹配→RANSAC→E→三角化→PnP→(BA) | 🟡 前端完成，**BA 待做** | TUM 基线 ATE 0.506m ✅ |
+| M1 | 手搓 SfM/VO | SIFT→匹配→RANSAC→E→三角化→PnP→BA(local_ba 已接入 VO) | 🟡 前端完成 + BA 接入 | TUM 基线 ATE 0.506m；BA 重投影 0.44→0.00px |
 | M2 | 深度与重建 | 双目视差 / RGB-D / TSDF 融合 | ⬜ | mesh 产出 |
 | M3 | 失效归因科学 | 退化建模 + 失效分类学 | ⬜ | **第一份归因报告** |
 | M4 | 前馈 3D 基础模型 | VGGT / MASt3R 复现与对比 | ⬜ | 一体化 vs 分块 实证 |
@@ -90,43 +95,38 @@ PYTHONPATH=src python -m wildspatial.data.download <url> <out> --workers 12
 
 1. 每个 Module 的产出必须包含：**理论文档 + 可运行代码 + 量化结果 + 反思**。
 2. 所有实验写入 `experiments/<module>/<exp>/`，目录内含 `README.md`（结论）、`metrics.json`、`figs/`。
-3. 数据放 `data/`，**不进 git**。
+3. 数据放 `data/`，**不进 git**（已被 `.gitignore` 排除）。
 4. 代码库 `src/wildspatial/` 要求 **每个几何函数都有解析/数值自检**（`tests/`），因为几何错误极难调试。
 5. 每完成一个 Module，更新本文件 + 写 `docs/<Mxx>_reflection.md`。
+6. **教程文档强制三段式**：「专业术语 + 直白讲解 + 结果图」。禁止只堆术语、禁止无图纯文字长推导。
+   图放 `experiments/<module>/<name>/figs/`，文档用 `../experiments/...` 相对路径引用。
 
 ---
 
 ## 5. 日志（倒序追加）
 
-### 2026-09-10
-- **建立项目骨架**：README / PROGRESS / docs/00_ROADMAP / env / src 结构。
-- **环境决策**：新建 `wildspatial` 环境（后台创建中），M0/M1 阶段先用 `det` 环境跑（依赖已够）。
-- **数据决策**：选 TUM RGB-D 作为 M0–M3 主数据集。理由：① 有真值轨迹与深度，可量化；② 自带
-  `nostructure_notexture` 序列，天然是"无纹理失效"实验台；③ 单序列仅 344MB，适配小团队算力。
-- **启动**：后台下载 `fr1/desk`；后台创建 conda 环境。
+### 2026-09-10（续3）· 文档统一 + 接入 GitHub
+- **三份文档风格统一**：`docs/00_QUICKSTART.md`（新）用大白话导览；`M0_geometry_foundation.md` 补 6 张图、
+  `M1_sfm_from_scratch.md` 补 3 张图，全部采用「术语+讲解+图」三段式。图片路径 `../experiments/...` 相对引用。
+- **接入 GitHub**：`https://github.com/liuliuqiu378/WildSpatial`。新建 `.gitignore`（排除 `data/` `.codebuddy/` `.pyc` `*.tgz`），
+  保留 `experiments/figs/`。首个 commit `c46fa48`（43 文件）已 push 到 `main`。
+  远程 `origin` 用干净 URL，push 时临时内联 PAT，未持久化进 `.git/config`（已验证）。
+- **更新 README / PROGRESS**：修正状态、命令（补 `PYTHONPATH=src`）、目录结构、补充文档导航与三段式说明。
 
-### 2026-09-10（续）· M0 完成 ✅
-- **产出**：`src/wildspatial/geometry/` 五个模块全部手写（lie / camera / epipolar / triangulation / pnp），
-  `tests/test_geometry.py` **25 项数值自检全绿**（`wildspatial` 与 `det` 双环境均通过）。
-- **教学产出**：`docs/M0_geometry_foundation.md`（概念+推导+坑+反思）+ `scripts/m0_demo.py`
-  → `experiments/M0_geometry_foundation/figs/` 6 张图（投影、极线、噪声退化、视差角、纯旋转退化、PnP精化）。
-- **工具**：`src/wildspatial/viz/plots.py`（中文字体统一处理，Noto Sans CJK）；
-  `src/wildspatial/data/download.py`（多线程分块下载，TUM 单连接太慢）。
-- **🔴 踩坑记录（重要，后面会反复遇到）**：
-  1. **`(N,3)` vs `(N,2)` 静默错位**：`normalize_points()` 返回齐次坐标 (N,3)，八点法按 (N,2) reshape 后
-     数据被打乱但**不报错**，解出的 E 与真值余弦相似度 0.83 —— 看起来合理，实则全错。
-     → 已加 `_as_euclidean()` 统一处理。**教训：几何代码必须数值自检。**
-  2. **PnP DLT 的全局符号不定性**：`M` 与 `-M` 残差完全相同，SVD 无法区分。
-     → 用正深度（chirality）消歧，否则平移整体反号（测试直接抓到）。
-  3. **DLT PnP 必须用归一化坐标**：方程建立在 `u = X/Z` 上，不先乘 `K^{-1}` 就会把内参污染进 R。
-  4. **三个"对称性陷阱"**（已写入文档）：E 的 4 解、PnP 符号、单目尺度不定 —— 统一解法都是**物理约束消歧**。
-- **环境**：`wildspatial` 已装好（torch 2.6.0+cu124 + CUDA 可用 + open3d 0.19 + opencv-contrib）。**后续统一用它**。
-- **下一步（M1）**：SIFT 特征提取 → 描述子匹配（比值检验）→ RANSAC 剔外点 → 八点法/五点法估 E
-  → 三角化建图 → PnP 定位 → 手写 BA；在 `fr1/desk` 上跑出轨迹并与真值算 ATE/RPE。
+### 2026-09-10（续4）· M1 BA 接入 VO ✅
+- **BA 接入**：`sfm/vo.py` 新增 `MonocularVO.refine()`——由 `self.obs` 反查每条观测像素坐标，构建
+  `obs=[(frame_idx, point_id, uv)]`，调用 `sfm.ba.local_ba`（固定第 0 帧 + 尺度锚消 7 维 gauge freedom）。
+  观测过多时确定性子采样（≤8000 条）控制运行时间，所有位姿/点仍参与优化。
+- **脚本**：`scripts/m1_run_vo.py` 新增 `--ba` 开关；BA 后重算 ATE、产出 `figs/trajectory_ba.png`（BA 前后轨迹对比）。
+- **验证（20 处理帧 fr1/desk）**：重投影 RMSE 0.444 → 0.000 px（BA 目标函数被完美打到 0，数学正确）；
+  ATE 0.0529 → 0.0533 m（短序列 VO 本身漂移小，BA 对 ATE 改善有限——**长序列才明显**，
+  而长序列 BA 很重，故生产用局部/增量 BA）。`tests/` 仍 53 passed。
+- ⚠️ **性能提醒**：纯 Python 雅可比 + scipy trf 在 8000 点/全序列上 BA 需数分钟；教学演示用短序列，
+  完整运行调小 `--frames` 或后续做增量 BA。
 
 ### 2026-09-10（续2）· M1 前端完成，跑出 TUM 基线 ✅
 - **产出**：`src/wildspatial/sfm/`（features / matching / ransac / vo）、`data/tum.py`、
-  `eval/trajectory.py`、`scripts/m1_run_vo.py`。**自检累计 47 项全绿**。
+  `eval/trajectory.py`、`scripts/m1_run_vo.py`。**自检累计 47 项全绿**（今累计 53 项含 BA）。
 - **基线结果**（`experiments/M1_vo_fr1_desk/`，fr1/desk，stride=3，450帧）：
   **ATE RMSE 0.506 m / RPE 平移 0.156 m / RPE 旋转 2.72° / 内点率 75.3% / 39 ms 帧 / 地图点 17388**。
   （对比：ORB-SLAM2 单目同序列约 0.02~0.05m，差距主要在**没有 BA/回环**。）
@@ -138,27 +138,37 @@ PYTHONPATH=src python -m wildspatial.data.download <url> <out> --workers 12
      拿去比 20m 阈值几乎全被误杀。→ 必须先定尺度再检查。
   3. **位姿指数爆炸（最严重）**：无护栏时一次 PnP 失败 → 回退路径用"上一帧位移"猜尺度
      → 异常跳变逐帧放大，**RPE 达到 49940 m**。→ 加运动连续性护栏后降到 0.156 m。
-- **下一步（M1 收尾）**：① **局部 BA**（手写残差 + 雅可比，scipy LM）→ 预计 ATE 大幅下降；
-  ② `--use-depth` 跑 RGB-D 定尺度版对比 SE3/Sim3；③ 关键帧机制；④ 进入 M3。
+
+### 2026-09-10（续）· M0 完成 ✅
+- **产出**：`src/wildspatial/geometry/` 五个模块全部手写（lie / camera / epipolar / triangulation / pnp），
+  `tests/test_geometry.py` **25 项数值自检全绿**（双环境通过）。
+- **教学产出**：`docs/M0_geometry_foundation.md` + `scripts/m0_demo.py`
+  → `experiments/M0_geometry_foundation/figs/` 6 张图。
+- **工具**：`src/wildspatial/viz/plots.py`（中文字体统一）；`src/wildspatial/data/download.py`（多线程下载）。
+- **🔴 踩坑记录**：
+  1. **`(N,3)` vs `(N,2)` 静默错位**：`normalize_points()` 返回齐次坐标 (N,3)，八点法按 (N,2) reshape 后
+     数据被打乱但**不报错**，E 与真值余弦相似度 0.83（看似合理，实则全错）。→ 已加 `_as_euclidean()`。
+  2. **PnP DLT 的全局符号不定性**：`M` 与 `-M` 残差完全相同，SVD 无法区分 → 用正深度（chirality）消歧。
+  3. **DLT PnP 必须用归一化坐标**：方程建立在 `u = X/Z` 上，不先乘 `K^{-1}` 会污染内参进 R。
+  4. **三个"对称性陷阱"**：E 的 4 解、PnP 符号、单目尺度不定 → 统一用**物理约束（正深度）消歧**。
+
+### 2026-09-10 · 建立项目骨架
+- README / PROGRESS / `docs/00_ROADMAP.md` / `env/` / `src/` 结构就绪。
+- **环境**：新建 `wildspatial` 环境并装好依赖（torch2.6+cu124 + CUDA 可用 + opencv-contrib + open3d）。
+- **数据**：选 TUM RGB-D 作为 M0–M3 主数据集（有真值+深度可量化，单序列仅 344MB 适配小算力）。
+- **启动**：后台下载 `fr1/desk`；后台创建 conda 环境（不阻塞，继续写代码）。
 
 ---
 
 ## 6. 已知坑 / 风险
 
-- 🔴 **多线程下载会静默损坏文件**（2026-09-10 实测）：
-  `fr3_nostructure` 用 12 线程下载后**文件大小完全正确（484772347 字节）但 `tar -tzf` 报 CORRUPT**。
-  根因：连接提前关闭时写入字节数不足，而文件已 truncate 到完整大小 → 中间留空洞。
-  **已修复**：`_download_range` 现在校验每块实际写入字节数，不足则回退进度重试（最多 4 次）；
-  并新增 `verify_archive()` 对 tgz/zip 做完整性校验。
+- 🔴 **多线程下载会静默损坏文件**：`fr3_nostructure` 用 12 线程下载后文件大小正确（484772347 字节）
+  但 `tar -tzf` 报 CORRUPT。根因：连接提前关闭时写入字节数不足、文件已 truncate 到完整大小 → 中间留空洞。
+  **已修复**：`_download_range` 校验每块实际写入字节数（不足回退重试最多 4 次）；新增 `verify_archive()` 做完整性校验。
   **教训**：网络实验中"文件大小对"≠"数据对"，归档类数据必须校验。
-- ⚠️ 待办：`fr3_nostructure` 的 `.tgz` 已损坏，需重新下载（用户未授权删除，暂保留）。
-  M3/M5 若要用它，先跑 `verify_archive()` 确认。
-- ⚠️ SubT-MRS 数据集体量与下载许可未核实（可能需申请）。备选：对 TUM 施加**合成退化**
-  （烟雾/低光/散射）做可控对照实验，性价比更高且可复现。
+- ⚠️ `fr3_nostructure` 的 `.tgz` 已损坏，需重新下载（用户未授权删除，暂保留）。M3/M5 若要用它，先跑 `verify_archive()` 确认。
+- ⚠️ SubT-MRS 数据集体量与下载许可未核实（可能需申请）。备选：对 TUM 施加**合成退化**（烟雾/低光/散射）做可控对照实验，性价比更高且可复现。
 - ⚠️ VGGT 需 `flash-attn`/`ninja`，在 4090+cu124 编译是否顺利待验证；备选走纯 PyTorch 路径。
-
-- ⚠️ SubT-MRS 数据集体量与下载许可未核实（可能需申请）—— M5 前再评估，备选：用退化合成（见 `docs/03`）对 TUM 施加烟雾/低光/散射，做**可控对照实验**，性价比更高且可复现。
-- ⚠️ VGGT 需 `flash-attn`/`ninja`，在 4090+cu124 编译是否顺利待验证；备选走纯 PyTorch 路径（慢但能跑）。
 
 ---
 

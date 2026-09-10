@@ -33,6 +33,7 @@ from ..geometry import lie, camera, epipolar, triangulation, pnp
 from .features import extract_features
 from .matching import match_ratio_test
 from .ransac import ransac_essential
+from .ba import local_ba
 
 __all__ = ["VOFrame", "MonocularVO", "VOConfig"]
 
@@ -453,3 +454,48 @@ class MonocularVO:
             if k != "status":
                 out[k] = np.array([0 if v is None else v for v in out[k]], dtype=float)
         return out
+
+    # ------------------------------------------------------------------ BA 精修
+    def refine(self, max_iter=80, max_obs=8000, verbose=False):
+        """用局部 BA 联合优化所有位姿与地图点，消除累积漂移。
+
+        构建观测 obs = [(frame_idx, point_id, uv)]，调用 sfm.ba.local_ba。
+        BA 固定第 0 帧（6 DOF）+ 尺度锚（1 DOF），详见 ba.py 顶部 docstring。
+
+        为兼顾教学演示的运行时间：当观测条数超过 max_obs 时做**确定性子采样**
+        （仅减少参与优化的观测条数，所有位姿 / 地图点仍参与优化，目标不变）。
+        返回 info dict（含 cost_before/after、rmse、n_obs_used 等）；
+        未初始化或观测过少则返回 skip。
+        """
+        if not self.initialized or len(self.points_3d) == 0:
+            return {"status": "skipped_not_ready"}
+        # 由 self.obs 反查每条观测的像素坐标（存在对应帧的 keypoints 里）
+        obs = []
+        for (frame_idx, kp_idx), pid in self.obs.items():
+            fi = int(frame_idx)
+            kpi = int(kp_idx)
+            if 0 <= fi < len(self.frames):
+                f = self.frames[fi]
+                if f.keypoints is not None and 0 <= kpi < len(f.keypoints):
+                    obs.append((fi, int(pid), np.asarray(f.keypoints[kpi], dtype=float)))
+        if len(obs) < 20:
+            return {"status": "skipped_few_obs", "n_obs": len(obs)}
+
+        # 观测过多时子采样，控制 BA 运行时间（不影响优化目标的正确性）
+        if len(obs) > max_obs:
+            rng = np.random.default_rng(0)
+            sel = rng.choice(len(obs), size=max_obs, replace=False)
+            obs = [obs[i] for i in sel]
+
+        poses = self.poses_cw()                 # (N,4,4) T_cw，顺序与帧一一对应
+        points = self.points_3d.copy()
+        poses_opt, points_opt, info = local_ba(
+            self.K, poses, points, obs,
+            n_fixed_poses=1, max_iter=max_iter, verbose=verbose)
+
+        # 写回（pose[0] 固定不变，世界系保持一致，后续帧沿用精修后的位姿）
+        for i in range(min(len(poses_opt), len(self.frames))):
+            self.frames[i].T_cw = poses_opt[i]
+        self.points_3d = points_opt
+        info["n_obs_used"] = len(obs)
+        return info
