@@ -1,0 +1,42 @@
+{
+  "sequence": "fr1/desk",
+  "frames": 450,
+  "feature": "sift",
+  "max_features": 3000,
+  "use_depth_scale": false,
+  "runtime_s": 18.01,
+  "ms_per_frame": 40.0,
+  "initialized": true,
+  "init_frame_idx": 3,
+  "ate": {
+    "rmse": 0.5057500960615524,
+    "mean": 0.4695905240026273,
+    "median": 0.45039060288574084,
+    "std": 0.18779749581186514,
+    "max": 0.8381471583367536,
+    "min": 0.10304650809538696,
+    "n": 147,
+    "scale": 0.299557506767691
+  },
+  "rpe": {
+    "trans_rmse": 0.15558038505652866,
+    "trans_mean": 0.13873506220928686,
+    "rot_rmse_deg": 2.7179694343253407,
+    "n": 146,
+    "delta": 1
+  },
+  "ate_curve_mean": 0.4695905240026273,
+  "diagnostics_mean": {
+    "n_features": 1082.2933333333333,
+    "n_matches": 322.7866666666667,
+    "inlier_ratio": 0.7525166709291988,
+    "n_map_final": 17388.0
+  },
+  "status_count": {
+    "first": 1,
+    "lost": 8,
+    "initialized": 1,
+    "tracked_pnp": 94,
+    "tracked_essential": 46
+  }
+}
