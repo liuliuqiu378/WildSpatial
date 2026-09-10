@@ -456,15 +456,19 @@ class MonocularVO:
         return out
 
     # ------------------------------------------------------------------ BA 精修
-    def refine(self, max_iter=80, max_obs=8000, verbose=False):
-        """用局部 BA 联合优化所有位姿与地图点，消除累积漂移。
+    def refine(self, max_iter=80, max_obs=8000, max_points=5000, verbose=False):
+        """用局部 BA 联合优化所有位姿与（部分）地图点，消除累积漂移。
 
         构建观测 obs = [(frame_idx, point_id, uv)]，调用 sfm.ba.local_ba。
         BA 固定第 0 帧（6 DOF）+ 尺度锚（1 DOF），详见 ba.py 顶部 docstring。
 
-        为兼顾教学演示的运行时间：当观测条数超过 max_obs 时做**确定性子采样**
-        （仅减少参与优化的观测条数，所有位姿 / 地图点仍参与优化，目标不变）。
-        返回 info dict（含 cost_before/after、rmse、n_obs_used 等）；
+        ⚡ **规模控制（教学关键点）**：全局 BA 在万级地图点上是"又慢又吃内存"的——
+        这正是 ORB-SLAM 之类必须用**局部 / 增量 BA（只在关键帧窗口内做）**的根本原因。
+        本项目为演示可复现，用**确定性子采样**把问题规模钉在预算内：
+          · 地图点超过 max_points → 均匀采样保留子集（其余点不参与优化但保留在地图里）
+          · 观测超过 max_obs → 子采样，仅减少参与优化的约束条数
+        所有位姿仍全部参与优化，优化目标（最小化重投影误差）不变，只是用子集近似。
+        返回 info dict（含 cost_before/after、rmse、n_obs_used、n_points_used 等）；
         未初始化或观测过少则返回 skip。
         """
         if not self.initialized or len(self.points_3d) == 0:
@@ -481,21 +485,37 @@ class MonocularVO:
         if len(obs) < 20:
             return {"status": "skipped_few_obs", "n_obs": len(obs)}
 
-        # 观测过多时子采样，控制 BA 运行时间（不影响优化目标的正确性）
+        # 1) 地图点过多 → 均匀采样保留一个子集（其余点不动，仅不参与本轮 BA）
+        points = self.points_3d.copy()
+        if len(points) > max_points:
+            rng = np.random.default_rng(1)
+            keep = np.sort(rng.choice(len(points), size=max_points, replace=False))
+            points = points[keep]
+            remap = {int(old): int(new) for new, old in enumerate(keep)}
+            obs = [(i, remap[j], uv) for (i, j, uv) in obs if j in remap]
+            info_points_used = int(len(points))
+        else:
+            keep = np.arange(len(points))
+            info_points_used = int(len(points))
+
+        # 2) 观测过多 → 子采样，仅减少参与优化的约束条数
         if len(obs) > max_obs:
             rng = np.random.default_rng(0)
             sel = rng.choice(len(obs), size=max_obs, replace=False)
             obs = [obs[i] for i in sel]
 
         poses = self.poses_cw()                 # (N,4,4) T_cw，顺序与帧一一对应
-        points = self.points_3d.copy()
         poses_opt, points_opt, info = local_ba(
             self.K, poses, points, obs,
             n_fixed_poses=1, max_iter=max_iter, verbose=verbose)
 
-        # 写回（pose[0] 固定不变，世界系保持一致，后续帧沿用精修后的位姿）
+        # 写回：位姿全部更新；地图点只更新被优化过的子集，其余原样保留
         for i in range(min(len(poses_opt), len(self.frames))):
             self.frames[i].T_cw = poses_opt[i]
-        self.points_3d = points_opt
+        new_points = self.points_3d.copy()
+        new_points[keep] = points_opt
+        self.points_3d = new_points
         info["n_obs_used"] = len(obs)
+        info["n_points_used"] = info_points_used
+        info["n_points_total"] = len(self.points_3d)
         return info
