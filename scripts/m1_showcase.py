@@ -33,6 +33,7 @@ sys.path.insert(0, os.path.join(ROOT, "src"))
 import cv2
 
 from wildspatial.data.tum import TUMDataset
+from wildspatial.data.degrade import degrade
 from wildspatial.sfm.features import extract_features, draw_keypoints
 from wildspatial.sfm.matching import match_ratio_test
 from wildspatial.sfm.ransac import ransac_essential
@@ -99,19 +100,9 @@ def apply_degradation(img, mode):
     """
     if mode is None or mode == "clean":
         return img
-    rng = np.random.default_rng(0)
-    if mode == "motion_blur":
-        k = np.zeros((15, 15))
-        k[7, :] = 1.0 / 15.0
-        return cv2.filter2D(img, -1, k)
-    if mode == "low_light":
-        dark = np.clip(img.astype(np.float32) * 0.30, 0, 255)
-        noise = rng.normal(0, 6, img.shape).astype(np.float32)
-        return np.clip(dark + noise, 0, 255).astype(np.uint8)
-    if mode == "noise":
-        noise = rng.normal(0, 25, img.shape).astype(np.float32)
-        return np.clip(img.astype(np.float32) + noise, 0, 255).astype(np.uint8)
-    return img
+    kind = "gaussian_noise" if mode == "noise" else mode
+    sev = {"motion_blur": 0.45, "low_light": 0.60, "noise": 0.50}.get(mode, 0.5)
+    return degrade(img, kind, sev)
 
 
 # ---------------------------------------------------------------- 图1 特征点

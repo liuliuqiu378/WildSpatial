@@ -38,9 +38,17 @@
 不了解传统 SfM 管线（特征→匹配→位姿→三角化→BA），就读不懂 VGGT 到底替代了什么，更读不懂它为什么会崩。
 所以 M1 会让你手写一个会"跑崩"的 VO —— **崩掉的那刻，才是真正理解的开始**。
 
-**教程写作约定（本项目强制）**：所有教学文档一律采用
-**「专业术语 + 直白讲解 + 结果图」三段式** —— 先给术语/公式，立刻用大白话解释"它到底在说什么"，
-并配实际跑出来的图。禁止只堆术语、禁止无图纯文字长推导。
+**教程写作约定（本项目强制 · 四段式）**：所有教学文档，每个知识点都必须讲清楚四件事：
+
+| 段 | 回答什么 | 要求 |
+|---|---|---|
+| ① **目的** | 它要解决什么问题？为什么需要它？ | 先给动机，否则读者不知道在学什么 |
+| ② **方法原理（专业）** | 术语 + 公式 + 推导 | 严谨、不回避，这是地基 |
+| ③ **直白讲解** | 用大白话/类比"它到底在说什么" | 建立直觉，不能只有术语 |
+| ④ **真实数据验证 + 效果图** | 在**带真值标签的公开数据集**上实跑 | 给量化指标 + 真实结果图 |
+
+验证首选 **TUM RGB-D `fr1/desk`**（含真值轨迹 + 深度图，可定量算 ATE/RPE）。
+⛔ 禁止只堆术语、⛔ 禁止无图纯文字长推导、⛔ 禁止只讲原理不跑数据。
 
 ---
 
@@ -53,7 +61,8 @@
 | 1 | [`docs/00_QUICKSTART.md`](docs/00_QUICKSTART.md) | **从这儿开始**：大白话讲项目在干啥、跑什么命令、看什么图 |
 | 2 | [`docs/00_ROADMAP.md`](docs/00_ROADMAP.md) | 全局路线图：M0~M9 每个阶段的主题与产出 |
 | 3 | [`docs/M0_geometry_foundation.md`](docs/M0_geometry_foundation.md) | M0 几何地基（含 6 张教学图） |
-| 4 | [`docs/M1_sfm_from_scratch.md`](docs/M1_sfm_from_scratch.md) | M1 手搓 SfM/单目 VO（含 3 张结果图） |
+| 4 | [`docs/M1_sfm_from_scratch.md`](docs/M1_sfm_from_scratch.md) | M1 手搓 SfM/单目 VO（含真实数据效果图 5 张 + 结果图） |
+| 5 | [`docs/M3_failure_attribution.md`](docs/M3_failure_attribution.md) | M3 失效归因：**什么条件会让系统崩、崩在哪一步**（13 次带真值实跑） |
 | — | [`PROGRESS.md`](PROGRESS.md) | 🔴 **进度唯一真源**：AI 助手每次必读，做完即更新 |
 
 > 📌 文档里的结果图用相对路径引用 `experiments/<module>/figs/`，已随代码提交，**在 GitHub 上能直接显示**。
@@ -92,11 +101,12 @@ PYTHONPATH=src python scripts/m1_run_vo.py --seq fr1/desk --frames 450 --stride 
 WildSpatial/
 ├── PROGRESS.md          # 🔴 进度台账，AI 助手每次必读
 ├── README.md            # 本文件
-├── docs/                # 教学文档（三段式：术语+讲解+图）
+├── docs/                # 教学文档（四段式：目的+原理+讲解+真实数据验证·图）
 │   ├── 00_QUICKSTART.md
 │   ├── 00_ROADMAP.md
 │   ├── M0_geometry_foundation.md
-│   └── M1_sfm_from_scratch.md
+│   ├── M1_sfm_from_scratch.md
+│   └── M3_failure_attribution.md
 ├── src/wildspatial/     # 核心代码库
 │   ├── geometry/        # M0：lie / camera / epipolar / triangulation / pnp（手搓）
 │   ├── sfm/             # M1：features / matching / ransac / vo / ba
@@ -141,5 +151,6 @@ WildSpatial/
 - 不要跳过"手搓"环节。跑不通才是收获。
 - 每个结论都要有**数字**支撑，没有数字的观点不写进报告。
 - 优先做**可复现的小实验**，而不是大模型的 fine-tune（算力不占优）。
-- 教学文档坚持「术语 + 讲解 + 图」三段式。
+- 教学文档坚持**四段式**：目的 → 方法原理（专业）→ 直白讲解 → 真实标签数据验证 + 效果图。
+- 结论必须用**带真值标签的数据集**实跑验证；没有标签时，用"合成退化"在带真值数据上做可控对照并明确标注。
 - 每完成一步，更新 `PROGRESS.md`。

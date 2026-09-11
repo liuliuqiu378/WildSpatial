@@ -1,0 +1,255 @@
+[
+  {
+    "kind": "clean",
+    "severity": 0.0,
+    "level": "轻",
+    "initialized": true,
+    "n_features": 1344.62,
+    "n_matches": 410.78,
+    "inlier_ratio": 0.7852651128503655,
+    "n_map": 8151.0,
+    "ate": 0.13532569767883432,
+    "rpe_trans": NaN,
+    "rpe_rot": NaN,
+    "status": {
+      "first": 1,
+      "lost": 2,
+      "initialized": 1,
+      "tracked_pnp": 33,
+      "tracked_essential": 13
+    }
+  },
+  {
+    "kind": "motion_blur",
+    "severity": 0.33,
+    "level": "轻",
+    "initialized": true,
+    "n_features": 297.5,
+    "n_matches": 169.48,
+    "inlier_ratio": 0.8060743801436082,
+    "n_map": 3207.0,
+    "ate": 0.13774849366281344,
+    "rpe_trans": NaN,
+    "rpe_rot": NaN,
+    "status": {
+      "first": 1,
+      "lost": 4,
+      "initialized": 1,
+      "tracked_pnp": 32,
+      "tracked_essential": 12
+    }
+  },
+  {
+    "kind": "motion_blur",
+    "severity": 0.66,
+    "level": "中",
+    "initialized": false,
+    "n_features": 164.04,
+    "n_matches": 6.44,
+    "inlier_ratio": 0.11357052250075504,
+    "n_map": 0.0,
+    "ate": NaN,
+    "rpe_trans": NaN,
+    "rpe_rot": NaN,
+    "status": {
+      "first": 1,
+      "lost": 8,
+      "lost_no_matches": 41
+    }
+  },
+  {
+    "kind": "motion_blur",
+    "severity": 1.0,
+    "level": "重",
+    "initialized": false,
+    "n_features": 111.62,
+    "n_matches": 4.58,
+    "inlier_ratio": 0.06776075776075777,
+    "n_map": 0.0,
+    "ate": NaN,
+    "rpe_trans": NaN,
+    "rpe_rot": NaN,
+    "status": {
+      "first": 1,
+      "lost": 4,
+      "lost_no_matches": 45
+    }
+  },
+  {
+    "kind": "gaussian_noise",
+    "severity": 0.33,
+    "level": "轻",
+    "initialized": true,
+    "n_features": 1734.64,
+    "n_matches": 345.66,
+    "inlier_ratio": 0.7503821742149944,
+    "n_map": 7279.0,
+    "ate": 0.15260395167736993,
+    "rpe_trans": NaN,
+    "rpe_rot": NaN,
+    "status": {
+      "first": 1,
+      "lost": 3,
+      "initialized": 1,
+      "tracked_pnp": 36,
+      "tracked_essential": 9
+    }
+  },
+  {
+    "kind": "gaussian_noise",
+    "severity": 0.66,
+    "level": "中",
+    "initialized": true,
+    "n_features": 1830.6,
+    "n_matches": 243.86,
+    "inlier_ratio": 0.7188125583826478,
+    "n_map": 3009.0,
+    "ate": 0.33636001495838996,
+    "rpe_trans": NaN,
+    "rpe_rot": NaN,
+    "status": {
+      "first": 1,
+      "lost": 4,
+      "initialized": 1,
+      "tracked_pnp": 25,
+      "tracked_essential": 19
+    }
+  },
+  {
+    "kind": "gaussian_noise",
+    "severity": 1.0,
+    "level": "重",
+    "initialized": true,
+    "n_features": 1938.32,
+    "n_matches": 175.3,
+    "inlier_ratio": 0.6779212388906983,
+    "n_map": 1801.0,
+    "ate": 0.30936547680998233,
+    "rpe_trans": NaN,
+    "rpe_rot": NaN,
+    "status": {
+      "first": 1,
+      "lost": 7,
+      "initialized": 1,
+      "tracked_essential": 19,
+      "tracked_pnp": 22
+    }
+  },
+  {
+    "kind": "low_light",
+    "severity": 0.33,
+    "level": "轻",
+    "initialized": true,
+    "n_features": 1178.12,
+    "n_matches": 339.42,
+    "inlier_ratio": 0.7689329229484768,
+    "n_map": 5864.0,
+    "ate": 0.12739665713204698,
+    "rpe_trans": NaN,
+    "rpe_rot": NaN,
+    "status": {
+      "first": 1,
+      "lost": 4,
+      "initialized": 1,
+      "tracked_pnp": 29,
+      "tracked_essential": 15
+    }
+  },
+  {
+    "kind": "low_light",
+    "severity": 0.66,
+    "level": "中",
+    "initialized": true,
+    "n_features": 763.7,
+    "n_matches": 212.56,
+    "inlier_ratio": 0.7501651121340074,
+    "n_map": 3890.0,
+    "ate": 0.21050755635792145,
+    "rpe_trans": NaN,
+    "rpe_rot": NaN,
+    "status": {
+      "first": 1,
+      "lost": 6,
+      "initialized": 1,
+      "tracked_essential": 11,
+      "tracked_pnp": 31
+    }
+  },
+  {
+    "kind": "low_light",
+    "severity": 1.0,
+    "level": "重",
+    "initialized": false,
+    "n_features": 4.68,
+    "n_matches": 0.42,
+    "inlier_ratio": 0.0,
+    "n_map": 0.0,
+    "ate": NaN,
+    "rpe_trans": NaN,
+    "rpe_rot": NaN,
+    "status": {
+      "first": 1,
+      "lost_no_matches": 49
+    }
+  },
+  {
+    "kind": "downsample",
+    "severity": 0.33,
+    "level": "轻",
+    "initialized": true,
+    "n_features": 1011.92,
+    "n_matches": 389.92,
+    "inlier_ratio": 0.7729099848370299,
+    "n_map": 7430.0,
+    "ate": 0.10643360504129065,
+    "rpe_trans": NaN,
+    "rpe_rot": NaN,
+    "status": {
+      "first": 1,
+      "lost": 4,
+      "initialized": 1,
+      "tracked_pnp": 32,
+      "tracked_essential": 12
+    }
+  },
+  {
+    "kind": "downsample",
+    "severity": 0.66,
+    "level": "中",
+    "initialized": true,
+    "n_features": 811.68,
+    "n_matches": 357.26,
+    "inlier_ratio": 0.7636865726236433,
+    "n_map": 5277.0,
+    "ate": 0.38730418169111486,
+    "rpe_trans": NaN,
+    "rpe_rot": NaN,
+    "status": {
+      "first": 1,
+      "lost": 6,
+      "initialized": 1,
+      "tracked_pnp": 27,
+      "tracked_essential": 15
+    }
+  },
+  {
+    "kind": "downsample",
+    "severity": 1.0,
+    "level": "重",
+    "initialized": true,
+    "n_features": 543.1,
+    "n_matches": 259.58,
+    "inlier_ratio": 0.7729807736991606,
+    "n_map": 3711.0,
+    "ate": 0.18709806918721625,
+    "rpe_trans": NaN,
+    "rpe_rot": NaN,
+    "status": {
+      "first": 1,
+      "lost": 4,
+      "initialized": 1,
+      "tracked_pnp": 31,
+      "tracked_essential": 13
+    }
+  }
+]
