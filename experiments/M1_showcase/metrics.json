@@ -1,0 +1,55 @@
+{
+  "features": {
+    "clean": 1191,
+    "motion_blur": 258,
+    "low_light": 341
+  },
+  "matching": {
+    "n_matches": 112,
+    "n_inliers": 78,
+    "inlier_ratio": 0.6964285714285714
+  },
+  "epipolar": {
+    "n_points": 10
+  },
+  "map3d": {
+    "ate_rmse": 0.15918785469950478,
+    "n_points": 8701
+  },
+  "ate_desk": {
+    "rmse": 0.15918785469950478,
+    "mean": 0.14907765219657942,
+    "median": 0.14647725718153767,
+    "std": 0.055826756124517485,
+    "max": 0.2814411509785047,
+    "min": 0.031855850746913314,
+    "n": 60.0,
+    "scale": 0.5505266634239533
+  },
+  "condition_stats": {
+    "干净": {
+      "n_features": 1252.7,
+      "n_matches": 368.5,
+      "inlier_ratio": 0.7712485125329605,
+      "n_map": 8701.0,
+      "initialized": true,
+      "ate": 0.15918785469950478
+    },
+    "运动模糊": {
+      "n_features": 247.96666666666667,
+      "n_matches": 141.05,
+      "inlier_ratio": 0.7755963931091441,
+      "n_map": 2314.0,
+      "initialized": true,
+      "ate": 0.13407036106929487
+    },
+    "低光照": {
+      "n_features": 301.31666666666666,
+      "n_matches": 95.0,
+      "inlier_ratio": 0.7782847942545552,
+      "n_map": 2017.0,
+      "initialized": true,
+      "ate": 0.1844456151036468
+    }
+  }
+}

@@ -4,8 +4,8 @@
   "feature": "sift",
   "max_features": 3000,
   "use_depth_scale": false,
-  "runtime_s": 72.53,
-  "ms_per_frame": 161.2,
+  "runtime_s": 17.81,
+  "ms_per_frame": 39.6,
   "initialized": true,
   "init_frame_idx": 3,
   "ate": {
@@ -26,33 +26,66 @@
     "delta": 1
   },
   "ba": {
+    "enabled": false
+  },
+  "loop": {
     "enabled": true,
     "status": "ok",
-    "success": false,
-    "cost_before": 10737.306216004685,
-    "cost_after": 407.3250691235218,
-    "rmse_before": 1.0361579316274816,
-    "rmse_after": 0.20181286893789824,
-    "n_observations": 5000,
+    "success": true,
+    "cost_before": 5.614684244984643,
+    "cost_after": 0.3818416572862456,
+    "rmse_before": 0.07846306151947856,
+    "rmse_after": 0.020461818778548167,
     "n_poses": 150,
-    "n_points": 5000,
-    "n_iter": 2000,
-    "n_fixed_poses": 1,
-    "scale_anchored": true,
-    "anchor_target_baseline": 0.0,
-    "n_obs_used": 5000,
-    "n_points_used": 5000,
-    "n_points_total": 17388
+    "n_odo_edges": 149,
+    "n_loop_priors": 3,
+    "n_iter": 22,
+    "n_candidates": 8,
+    "n_priors": 3,
+    "loop_pairs": [
+      [
+        110,
+        55
+      ],
+      [
+        125,
+        40
+      ],
+      [
+        115,
+        50
+      ],
+      [
+        120,
+        45
+      ],
+      [
+        90,
+        75
+      ],
+      [
+        100,
+        65
+      ],
+      [
+        95,
+        70
+      ],
+      [
+        45,
+        30
+      ]
+    ]
   },
-  "ate_after": {
-    "rmse": 0.5057865739616246,
-    "mean": 0.46962073176776903,
-    "median": 0.45019351025747567,
-    "std": 0.1878201977790012,
-    "max": 0.838015074743001,
-    "min": 0.10232641357683402,
+  "ate_loop": {
+    "rmse": 0.5234007478769191,
+    "mean": 0.4848264641733723,
+    "median": 0.44494876797163985,
+    "std": 0.19720964103020927,
+    "max": 1.0208502321833433,
+    "min": 0.17432579607707588,
     "n": 147,
-    "scale": 0.2995393748613549
+    "scale": 0.28184913374905374
   },
   "ate_curve_mean": 0.4695905240026273,
   "diagnostics_mean": {

@@ -12,6 +12,7 @@
     figs/diagnostics.png    每帧诊断曲线（M3 失效归因的数据源）
     figs/ate_curve.png      ATE 随时间的漂移
     figs/trajectory_ba.png 局部 BA 前后轨迹对比（加 --ba 时生成）
+    figs/trajectory_loop.png 回环+PGO 前后轨迹对比（加 --loop 时生成）
     metrics.json            量化结果
     README.md               结论与反思
 """
@@ -64,7 +65,10 @@ def parse_args():
     p.add_argument("--use-depth", action="store_true",
                    help="用深度图定尺度（RGB-D 模式；否则单目，需 Sim3 对齐）")
     p.add_argument("--ba", action="store_true",
-                   help="跑完 VO 后追加局部 BA 重优化（消除累积漂移，通常显著降 ATE）")
+                   help="跑完 VO 后追加局部 BA 重优化（降低重投影误差）")
+    p.add_argument("--loop", action="store_true",
+                   help="跑完后做回环检测 + 位姿图优化（PGO）——把累积漂移分摊回整条轨迹，"
+                        "这是把 ATE 真正砍下来的关键")
     p.add_argument("--out", default=None)
     return p.parse_args()
 
@@ -227,6 +231,53 @@ def main():
             else:
                 print(f"[BA] 跳过：{ba_info.get('status')}")
 
+        # -------- 可选：回环检测 + 位姿图优化（PGO）--------
+        metrics["loop"] = {"enabled": bool(args.loop)}
+        if args.loop:
+            loop_info = vo.close_loops(kf_stride=5, min_gap=3, verbose=True)
+            metrics["loop"].update({k: v for k, v in loop_info.items()})
+            if loop_info.get("status") == "ok":
+                est_l = vo.trajectory()
+                est_l_e = est_l[start:]
+                m_l = min(len(est_l_e), len(gt_e))
+                est_l_e = est_l_e[:m_l]
+                aligned_loop, _ = align_trajectory(est_l_e, gt_e[:m_l], allow_scale)
+                ate_loop = compute_ate(est_l_e, gt_e[:m_l], allow_scale=allow_scale)
+                metrics["ate_loop"] = {k: v for k, v in ate_loop.items()}
+
+                # 基准：若跑了 BA 则以 BA 后为基准，否则以纯 VO 为基准
+                if args.ba and "ate_after" in metrics:
+                    before_ate = metrics["ate_after"]["rmse"]
+                    before_traj = aligned_after
+                    before_label = f"BA 后 (ATE={before_ate:.3f}m)"
+                else:
+                    before_ate = ate["rmse"]
+                    before_traj = aligned
+                    before_label = f"回环前 (ATE={before_ate:.3f}m)"
+
+                print(f"\n[回环] 候选 {loop_info.get('n_candidates')} 个，"
+                      f"采用 {loop_info.get('n_priors')} 条约束 "
+                      f"{loop_info.get('loop_pairs')}")
+                print(f"[回环] PGO 残差 RMSE: {loop_info.get('rmse_before'):.4f}"
+                      f" → {loop_info.get('rmse_after'):.4f}")
+                print(f"[回环] ATE  RMSE    : {before_ate:.4f} → {ate_loop['rmse']:.4f} m")
+
+                # 图5：回环前后轨迹对比（俯视 X-Z）
+                fig, ax = plt.subplots(figsize=(7, 6))
+                ax.plot(gt_e[:m_l, 0], gt_e[:m_l, 2], "k-", linewidth=2, label="真值")
+                ax.plot(before_traj[:m_l, 0], before_traj[:m_l, 2], "b--",
+                        linewidth=1.4, label=before_label)
+                ax.plot(aligned_loop[:, 0], aligned_loop[:, 2], "r-",
+                        linewidth=1.4, label=f"回环+PGO 后 (ATE={ate_loop['rmse']:.3f}m)")
+                ax.set_xlabel("X (m)"); ax.set_ylabel("Z (m)")
+                ax.set_title("回环检测 + 位姿图优化前后轨迹对比（俯视 X-Z）", fontsize=12)
+                ax.legend(); ax.axis("equal")
+                plt.tight_layout()
+                plt.savefig(f"{out_dir}/figs/trajectory_loop.png", dpi=130)
+                plt.close()
+            else:
+                print(f"\n[回环] 跳过：{loop_info.get('status')}")
+
         metrics["ate_curve_mean"] = float(np.mean(err_t))
     else:
         print("[!] 无真值，跳过评估")
@@ -264,7 +315,8 @@ def main():
 
     print(f"\n[✓] 产出目录: {out_dir}")
     print("    figs/trajectory.png  figs/diagnostics.png  figs/ate_curve.png"
-          + ("  figs/trajectory_ba.png" if args.ba else "") + "  metrics.json")
+          + ("  figs/trajectory_ba.png" if args.ba else "")
+          + ("  figs/trajectory_loop.png" if args.loop else "") + "  metrics.json")
     return 0
 
 

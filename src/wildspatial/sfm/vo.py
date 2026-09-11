@@ -34,6 +34,8 @@ from .features import extract_features
 from .matching import match_ratio_test
 from .ransac import ransac_essential
 from .ba import local_ba
+from .loop import detect_loops, build_loop_priors
+from .pgo import pose_graph_optimize
 
 __all__ = ["VOFrame", "MonocularVO", "VOConfig"]
 
@@ -518,4 +520,60 @@ class MonocularVO:
         info["n_obs_used"] = len(obs)
         info["n_points_used"] = info_points_used
         info["n_points_total"] = len(self.points_3d)
+        return info
+
+    # ------------------------------------------------------------------ 回环 + PGO
+    def close_loops(self, kf_stride=5, min_gap=3, min_matches=60,
+                    min_inlier_ratio=0.5, window=3, min_points=25,
+                    max_drift_m=3.0, loop_weight=1.0, max_iter=50, verbose=False):
+        """回环检测 + 位姿图优化（PGO），把累积漂移分摊回整条轨迹。
+
+        流程：
+          1. `detect_loops`    ：关键帧两两匹配 + E 矩阵几何验证，找出"回到旧地"的帧对
+          2. `build_loop_priors`：用旧帧可见的地图点 + 新帧 2D 做 PnP，解出新帧的**绝对**位姿
+                                 （这条约束不累积 j→i 之间的逐帧误差）
+          3. 里程计边：相邻帧由 VO 给出的相对位姿 M = T_{i+1}·T_i^{-1}
+          4. `pose_graph_optimize`：联合优化所有位姿，让两类边都尽量满足
+          5. 写回位姿（第 0 帧固定，保证世界系不变）
+
+        返回 info dict（含 cost/rmse 前后、检测到的回环数等）。
+        """
+        if not self.initialized or len(self.frames) < 4:
+            return {"status": "skipped_not_ready"}
+
+        cands = detect_loops(self, kf_stride=kf_stride, min_gap=min_gap,
+                             min_matches=min_matches,
+                             min_inlier_ratio=min_inlier_ratio,
+                             verbose=verbose)
+        if not cands:
+            return {"status": "no_loop_detected", "n_candidates": 0}
+
+        priors = build_loop_priors(self, cands, window=window,
+                                   min_points=min_points,
+                                   max_drift_m=max_drift_m, verbose=verbose)
+        if not priors:
+            return {"status": "no_loop_pose", "n_candidates": len(cands),
+                    "n_priors": 0}
+
+        poses0 = self.poses_cw()                       # (N,4,4)
+        if len(poses0) < 2:
+            return {"status": "skipped_few_poses"}
+
+        # 里程计边：相邻帧相对位姿（来自 VO 链式结果，含累积误差）
+        odo = []
+        for i in range(len(poses0) - 1):
+            M = poses0[i + 1] @ np.linalg.inv(poses0[i])
+            odo.append((i, i + 1, M))
+
+        poses_opt, info = pose_graph_optimize(
+            poses0, odo, priors, fix_first=True,
+            loop_weight=loop_weight, max_iter=max_iter, verbose=verbose)
+
+        # 写回（第 0 帧固定，后续帧用优化后的位姿）
+        for i in range(min(len(poses_opt), len(self.frames))):
+            self.frames[i].T_cw = poses_opt[i]
+
+        info["n_candidates"] = len(cands)
+        info["n_priors"] = len(priors)
+        info["loop_pairs"] = [[c["i"], c["j"]] for c in cands]
         return info
