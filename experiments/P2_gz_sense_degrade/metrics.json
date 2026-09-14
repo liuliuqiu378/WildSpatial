@@ -1,0 +1,73 @@
+{
+  "capture": {
+    "n_rgb": 152,
+    "n_depth": 76,
+    "frames": [
+      {
+        "idx": 0,
+        "rgb_shape": [
+          480,
+          640,
+          3
+        ],
+        "depth_shape": [
+          240,
+          320
+        ],
+        "depth_min": 0.5279698967933655,
+        "depth_max": 4.781798362731934
+      },
+      {
+        "idx": 1,
+        "rgb_shape": [
+          480,
+          640,
+          3
+        ],
+        "depth_shape": [
+          240,
+          320
+        ],
+        "depth_min": 0.37061426043510437,
+        "depth_max": 4.188656806945801
+      },
+      {
+        "idx": 2,
+        "rgb_shape": [
+          480,
+          640,
+          3
+        ],
+        "depth_shape": [
+          240,
+          320
+        ],
+        "depth_min": 0.5279702544212341,
+        "depth_max": 2.622382402420044
+      },
+      {
+        "idx": 3,
+        "rgb_shape": [
+          480,
+          640,
+          3
+        ],
+        "depth_shape": [
+          240,
+          320
+        ],
+        "depth_min": 0.5279728174209595,
+        "depth_max": 1.3505078554153442
+      }
+    ]
+  },
+  "rgb_topic": "/camera/color/image_raw",
+  "depth_topic": "/world/default/model/turtlebot3_waffle/link/camera_link/sensor/intel_realsense_r200_depth/depth_image",
+  "injected_rgb": true,
+  "degradations": [
+    "low_light(0.5/1.0)",
+    "fog(0.5/1.0)",
+    "gaussian_noise(1.0)"
+  ],
+  "note": "RGB 相机为注入（原 TB3 仅深度）；退化为仿真 RGB 上合成施加"
+}

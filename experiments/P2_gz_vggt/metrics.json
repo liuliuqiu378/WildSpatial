@@ -1,0 +1,37 @@
+{
+  "n_frames": 4,
+  "vggt": true,
+  "comparison": [
+    {
+      "frame": 0,
+      "scale": 2.2255,
+      "rmse": 0.2314,
+      "absrel": 0.0433,
+      "n_valid": 61227
+    },
+    {
+      "frame": 1,
+      "scale": 2.8514,
+      "rmse": 0.2651,
+      "absrel": 0.1274,
+      "n_valid": 69010
+    },
+    {
+      "frame": 2,
+      "scale": 2.31,
+      "rmse": 0.0788,
+      "absrel": 0.0522,
+      "n_valid": 71157
+    },
+    {
+      "frame": 3,
+      "scale": 2.9907,
+      "rmse": 0.1147,
+      "absrel": 0.1051,
+      "n_valid": 76800
+    }
+  ],
+  "mean_rmse": 0.1725,
+  "mean_absrel": 0.082,
+  "note": "VGGT 相对尺度按中位比例对齐；仿真域材质简单"
+}

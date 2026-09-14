@@ -285,6 +285,23 @@ GitHub 仓库   https://github.com/liuliuqiu378/WildSpatial  （已 git init，�
 
 ## 5. 日志（倒序追加）
 
+### 2026-09-14（续38）· 🎯 P2 感知实验台实战：仿真 RGB-D + 可控退化 + VGGT 重建
+- **A. 给 TB3 注入 RGB 相机**：原 TB3 SDF **只有深度相机** → 复制 SDF 到 `data/gz_models/urdf/` 注入
+  RGB 相机（640×480，FOV 60°），用 `spawn_tb3.launch.py robot_sdf:=<path>` 覆盖（不改原包）。
+- **B. 仿真 RGB-D 采集 + 可控退化**（`scripts/p2_gz_sense_degrade.py` → `experiments/P2_gz_sense_degrade/`）：
+  - `cmd_vel` 驱动 TB3 **边走边采**：RGB 152 帧到达，存 4 帧（640×480 RGB + 320×240 真值深度）；
+  - **深度随移动变化** 0.53–4.78m → 0.53–1.35m（逼近柱子，视角真在变）；
+  - 出不意图 3 张：多帧 RGB-D、**可控退化图库**（低光/雾/噪声 ×6）、退化统计（亮度/对比度量化）。
+  - ⚠️ 踩坑：内嵌脚本 `str(drive).lower()` 生成 `true` → Python 应 `True`（已修）。
+- **C. VGGT 重建 vs 仿真真值（M4 落点）**（`scripts/p2_gz_vggt_eval.py` → `experiments/P2_gz_vggt/`）：
+  - 4 帧仿真 RGB 喂 VGGT（`return_dense=True`）→ 稠密深度 + 点云；
+  - 中位尺度对齐后：**RMSE 0.079–0.265 m、AbsRel 0.043–0.127**（平均 RMSE≈0.17m, AbsRel≈0.08）；
+  - **与 M4 真实数据（TUM δ1>0.96、RMSE 0.10–0.16m）同量级** → **证明仿真实验台对 M4 有效**。
+  - 出图 2 张：VGGT vs 真值三行对比、VGGT 重建点云。
+- **价值**：把 P2 从"规划 demo"彻底拉回"**感知实验台**"，直接服务 M4（VGGT 评测）/M5（退化图谱）。
+- **联动**：`docs/P2_simulation.md §4.8/§4.9`（含详细通俗讲解）；`00_INDEX.md` 图索引 +3 行；本文件续38。
+- **下一步**：① 仿真 SDF 内直接加雾/改光照（比 P 图更真）；② 用退化图库复现 M5 方法动物园。
+
 ### 2026-09-14（续37）· 🎯 P2 定位修正：Gazebo = 感知实验台（回到视觉+传感器王牌）
 - **用户关键质疑**：「怎么感觉都是跟导航规划有关的，跟视觉传感器等实时场景关系不大。」
   **这是对的**——此前 P2 一度偏到 Nav2 导航栈（costmap/规划器），但本项目王牌是**视觉+传感器感知**
