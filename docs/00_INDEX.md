@@ -130,6 +130,7 @@ F4（你的知识地图，先建立信心）→ F0 → F1 → F2 → F3（4 篇�
 | **P2 仿真真值轨迹（ATE 免费参考）** | `experiments/P2_gz_physical/figs/gt_trajectory.png` | **P2, M1** |
 | **P2 移动操作：A\*(2D) vs OMPL(高维关节空间)** | `experiments/P2_mobile_manipulation/figs/planner_compare.png` | **P2** |
 | **P2 RRT/PRM 撒点连线可视化** | `experiments/P2_mobile_manipulation/figs/rrt_prm.png` | **P2** |
+| **P2 多传感器同步（相机+LiDAR+IMU）** | `experiments/P2_gz_multisensor/figs/sensor_fusion.png` | **P2, M6, F5** |
 
 ### 📷 一屏看懂本项目做了什么（精选图墙，按主线顺序）
 

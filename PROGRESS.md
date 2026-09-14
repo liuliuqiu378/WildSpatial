@@ -285,6 +285,17 @@ GitHub 仓库   https://github.com/liuliuqiu378/WildSpatial  （已 git init，�
 
 ## 5. 日志（倒序追加）
 
+### 2026-09-14（续41）· P2 感知实验台（四）：多传感器同步（相机+LiDAR+IMU）— M6/F5 落点
+- **新增 §4.13** + `scripts/p2_gz_multisensor.py` → `experiments/P2_gz_multisensor/`：
+  - **关键技术**：跨两侧订阅——RGB/深度相机在 **gz 侧**（用 `gz.transport13`），
+    LiDAR `/scan` 与 IMU `/imu` 在 **ROS 侧**（用 `rclpy`）；
+  - **实测**：RGB **139 帧 @10.01Hz**、深度 **70 帧 @5.04Hz**、LiDAR **128 帧 @9.71Hz**、IMU **128 帧 @9.71Hz**
+    （与 SDF 配置一致）；
+  - 出图：相机 + LiDAR 扫描 + 各传感器数据率。
+- **价值**：M6 多模态融合 / F5 视觉+LiDAR 融合的**输入实验台**——同源同帧、时间戳天然同步，
+  真实数据集则需硬件 PPS/软件对齐。
+- **联动**：`docs/P2_simulation.md §4.13`；`00_INDEX.md` 图索引 +1；本文件续41。
+
 ### 2026-09-14（续40）· P2 移动操作（mobile manipulation）+ ROS2 名词速查 + OMPL 实跑
 - **A. 新增 §4.12**：ROS2 词汇表（ROS2/DiffDrive/Nav2/A*/ros2_control/OMPL/RRT/PRM/MoveIt2）+ A* vs OMPL 核心区分 + 移动操作实跑。
 - **B. 安装 MoveIt 生态**：`ros-jazzy-moveit`(2.12.4) + `ros2_control`(4.47) + `ompl` 全部就位
