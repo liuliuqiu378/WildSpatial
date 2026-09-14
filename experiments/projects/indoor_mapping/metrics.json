@@ -1,0 +1,285 @@
+{
+  "project": "indoor_mapping",
+  "title": "室内机器人语义建图与导航",
+  "dataset": "TUM RGB-D fr1/desk（本地已下载，含深度+真值位姿）",
+  "n_frames": 199,
+  "scenario": "indoor",
+  "has_depth": true,
+  "has_gt": true,
+  "stage_results": [
+    {
+      "name": "vo",
+      "ok": true,
+      "skipped": false,
+      "skip_reason": "",
+      "metrics": {
+        "n_valid_frames": 199,
+        "ate_rmse_m_up_to_scale": 0.6428,
+        "ms_per_frame": 95.8,
+        "fps": 10.4,
+        "feature": "sift",
+        "used_gt_odometry": false,
+        "_elapsed_s": 19.16
+      },
+      "note": "单目 VO 产出 up-to-scale 轨迹（199 帧有效），自由尺度 ATE=0.643m"
+    },
+    {
+      "name": "depth",
+      "ok": true,
+      "skipped": false,
+      "skip_reason": "",
+      "metrics": {
+        "has_depth_sensor": true,
+        "scale_factor": 0.3467,
+        "ate_rmse_m_metric": 0.6865,
+        "_elapsed_s": 0.0
+      },
+      "note": "以度量源标定尺度系数=0.347 → 公制 ATE=0.686m（数据集自带深度可直接提供该尺度）"
+    },
+    {
+      "name": "semantic",
+      "ok": false,
+      "skipped": true,
+      "skip_reason": "未检测到 OWL-ViT（设 OWLVIT_DIR 指向本地模型可启用）",
+      "metrics": {
+        "_elapsed_s": 2.31
+      },
+      "note": "降级：场景图使用几何标签 object"
+    },
+    {
+      "name": "scene_graph",
+      "ok": true,
+      "skipped": false,
+      "skip_reason": "",
+      "metrics": {
+        "raw_proposals": 19,
+        "instances": 17,
+        "_elapsed_s": 0.04
+      },
+      "note": "解构出 17 个 3D 物体实例（几何标签；启用 OWL-ViT 得语义标签）"
+    },
+    {
+      "name": "edge",
+      "ok": true,
+      "skipped": false,
+      "skip_reason": "",
+      "metrics": {
+        "budget_rows": [
+          {
+            "scale": 1.0,
+            "ms_per_frame": 75.0,
+            "fps": 13.3,
+            "rel_compute_budget": 1.0,
+            "ate_rmse_m": 0.5381,
+            "status": "OK"
+          },
+          {
+            "scale": 0.5,
+            "ms_per_frame": 67.1,
+            "fps": 14.9,
+            "rel_compute_budget": 0.25,
+            "ate_rmse_m": 0.4502,
+            "status": "OK"
+          }
+        ],
+        "_elapsed_s": 11.38
+      },
+      "note": "端侧算力预算曲线（分辨率↓ → 算力预算↓，越过悬崖则 VO 失效）"
+    }
+  ],
+  "edge_budget": [
+    {
+      "scale": 1.0,
+      "ms_per_frame": 75.0,
+      "fps": 13.3,
+      "rel_compute_budget": 1.0,
+      "ate_rmse_m": 0.5381,
+      "status": "OK"
+    },
+    {
+      "scale": 0.5,
+      "ms_per_frame": 67.1,
+      "fps": 14.9,
+      "rel_compute_budget": 0.25,
+      "ate_rmse_m": 0.4502,
+      "status": "OK"
+    }
+  ],
+  "scene_graph": {
+    "n_raw_proposals": 19,
+    "n_instances": 17,
+    "instances": [
+      {
+        "id": 6,
+        "label": "object",
+        "centroid_m": [
+          -1.331,
+          -0.353,
+          0.528
+        ],
+        "n_detections": 2
+      },
+      {
+        "id": 8,
+        "label": "object",
+        "centroid_m": [
+          -0.937,
+          -0.208,
+          -0.131
+        ],
+        "n_detections": 2
+      },
+      {
+        "id": 0,
+        "label": "object",
+        "centroid_m": [
+          -0.043,
+          0.004,
+          1.084
+        ],
+        "n_detections": 1
+      },
+      {
+        "id": 1,
+        "label": "object",
+        "centroid_m": [
+          -0.829,
+          0.458,
+          0.18
+        ],
+        "n_detections": 1
+      },
+      {
+        "id": 2,
+        "label": "object",
+        "centroid_m": [
+          -1.076,
+          -0.015,
+          0.538
+        ],
+        "n_detections": 1
+      },
+      {
+        "id": 3,
+        "label": "object",
+        "centroid_m": [
+          -1.068,
+          0.147,
+          0.281
+        ],
+        "n_detections": 1
+      },
+      {
+        "id": 4,
+        "label": "object",
+        "centroid_m": [
+          -0.876,
+          -0.329,
+          0.247
+        ],
+        "n_detections": 1
+      },
+      {
+        "id": 5,
+        "label": "object",
+        "centroid_m": [
+          -1.396,
+          -0.64,
+          0.844
+        ],
+        "n_detections": 1
+      },
+      {
+        "id": 7,
+        "label": "object",
+        "centroid_m": [
+          -1.317,
+          -0.313,
+          0.255
+        ],
+        "n_detections": 1
+      },
+      {
+        "id": 9,
+        "label": "object",
+        "centroid_m": [
+          -0.711,
+          0.139,
+          -0.337
+        ],
+        "n_detections": 1
+      },
+      {
+        "id": 10,
+        "label": "object",
+        "centroid_m": [
+          -0.963,
+          0.009,
+          -0.775
+        ],
+        "n_detections": 1
+      },
+      {
+        "id": 11,
+        "label": "object",
+        "centroid_m": [
+          -1.045,
+          0.172,
+          -1.445
+        ],
+        "n_detections": 1
+      },
+      {
+        "id": 12,
+        "label": "object",
+        "centroid_m": [
+          0.107,
+          0.337,
+          0.968
+        ],
+        "n_detections": 1
+      },
+      {
+        "id": 13,
+        "label": "object",
+        "centroid_m": [
+          -0.408,
+          0.147,
+          1.007
+        ],
+        "n_detections": 1
+      },
+      {
+        "id": 14,
+        "label": "object",
+        "centroid_m": [
+          -0.729,
+          1.002,
+          1.045
+        ],
+        "n_detections": 1
+      },
+      {
+        "id": 15,
+        "label": "object",
+        "centroid_m": [
+          -1.116,
+          0.94,
+          1.234
+        ],
+        "n_detections": 1
+      },
+      {
+        "id": 16,
+        "label": "object",
+        "centroid_m": [
+          -0.644,
+          1.277,
+          0.087
+        ],
+        "n_detections": 1
+      }
+    ]
+  },
+  "knowledge_bridge": "把 M2(VO)→M4(深度定尺度)→M7(开放词汇语义)→M9(场景图)→M8(端侧预算) 串成一条室内机器人『先建图、再理解、最后能上端侧』的链路：VO 给出 up-to-scale 轨迹，深度传感器把尺度锚定到公制，开放词汇检测给物体贴自然语言标签，场景图把世界解构成『N 个物体在该坐标』，端侧预算曲线回答『能不能实时跑在机器人板子上』。"
+}

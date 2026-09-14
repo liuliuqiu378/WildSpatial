@@ -1,0 +1,41 @@
+{
+  "n_total_groups": 24,
+  "samples": [
+    {
+      "name": "185863_127514",
+      "size_HW": [
+        560,
+        418
+      ],
+      "changed_pixel_frac": 0.0729,
+      "changed_polygons": 591
+    },
+    {
+      "name": "402792_209697",
+      "size_HW": [
+        415,
+        560
+      ],
+      "changed_pixel_frac": 0.0892,
+      "changed_polygons": 261
+    },
+    {
+      "name": "402792_257631",
+      "size_HW": [
+        408,
+        560
+      ],
+      "changed_pixel_frac": 0.0563,
+      "changed_polygons": 222
+    },
+    {
+      "name": "402792_715374",
+      "size_HW": [
+        399,
+        560
+      ],
+      "changed_pixel_frac": 0.0928,
+      "changed_polygons": 202
+    }
+  ]
+}

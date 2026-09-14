@@ -1,0 +1,16 @@
+{
+  "sequence": "fr1/desk",
+  "tau": 0.3,
+  "frames": 67,
+  "degrade": null,
+  "severity": null,
+  "runtime_s": 6.74,
+  "ms_per_frame": 100.6,
+  "rescue_zone_ratio": 0.015,
+  "mean_inlier_ratio": 0.752,
+  "mean_features": 1210.4,
+  "vo_ate_sim3_rmse_m": 0.1708,
+  "vo_ate_median_m": 0.1244,
+  "vo_depth_fixed_ate_se3_rmse_m": 0.2043,
+  "scale_recovered": false
+}

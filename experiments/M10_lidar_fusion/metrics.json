@@ -1,0 +1,12 @@
+{
+  "sequence": "fr1/desk",
+  "note": "用 TUM 真实深度作点云几何源（RGB-D ≡ LiDAR 几何本质；差异在稀疏/视场/光照）",
+  "points_total": 255190,
+  "points_in_fov_ratio": 1.0,
+  "sparse_lidar_points_in_fov": 4000,
+  "reproj_mean_px": 0.0,
+  "depth_range_m": [
+    0.3,
+    5.0
+  ]
+}

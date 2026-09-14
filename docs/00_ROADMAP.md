@@ -24,6 +24,21 @@
                         M9 综合闭环
 ```
 
+### 📷 全局地图的「一图流」（每一层给一张代表作）
+
+| 层 | 代表作 | 说明 |
+|---|---|---|
+| 基础层 · 投影 | ![相机投影](../experiments/M0_geometry_foundation/figs/fig1_projection.png) | 3D 世界 → 2D 像素（F0/M0） |
+| 基础层 · 轨迹 | ![VO 轨迹](../experiments/M1_vo_fr1_desk/figs/trajectory.png) | 一段视频 → 相机轨迹（M1） |
+| 基础层 · 重建 | ![TSDF](../experiments/M2_recon/figs/recon.png) | 深度 → 3D 网格（M2） |
+| 科学层 · 失效 | ![失效图谱](../experiments/M3_degradation_sweep/figs/failure_atlas.png) | 什么条件崩、崩在哪一步（M3） |
+| 科学层 · 前馈 | ![VGGT 深度](../experiments/M4_depth_atlas/figs/depth_vs_degradation.png) | 前馈模型深度几乎不退化（M4） |
+| 科学层 · 图谱 ⭐ | ![ATE 热力图](../experiments/M5_method_atlas/figs/atlas_ate.png) | 方法 × 环境失效图谱（M5，核心资产） |
+| 工程层 · 融合 | ![M6 监控](../experiments/M6_fusion_guard/figs/guard_low_light_s0.9.png) | 退化监控触发救援（M6） |
+| 工程层 · 语义 | ![开放词汇](../experiments/M7_semantic/figs/open_vocab_detection.png) | 自然语言查询检测（M7） |
+| 工程层 · 端侧 | ![M8 权衡](../experiments/M8_edge/figs/tradeoff.png) | 算力预算 vs 精度（M8） |
+| 收口 · 闭环 | ![场景图](../experiments/M9_closed_loop/figs/scene_graph.png) | 解构世界为 3D 物体（M9） |
+
 ---
 
 ## M0 · 几何地基 🟡

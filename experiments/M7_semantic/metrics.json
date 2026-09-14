@@ -1,0 +1,63 @@
+{
+  "sequence": "TUM fr1/desk",
+  "tool": "google/owlvit-base-patch32 (open-vocabulary)",
+  "queries": [
+    "a bottle",
+    "a cup",
+    "a keyboard",
+    "a book",
+    "a remote control",
+    "a red object",
+    "the object on the left"
+  ],
+  "frames": [
+    {
+      "file": "1305031452.791720.png",
+      "num_hits": 6,
+      "queries_fired": [
+        "a book",
+        "a keyboard"
+      ]
+    },
+    {
+      "file": "1305031459.591695.png",
+      "num_hits": 7,
+      "queries_fired": [
+        "a book",
+        "a cup",
+        "a keyboard",
+        "a remote control"
+      ]
+    },
+    {
+      "file": "1305031466.395784.png",
+      "num_hits": 11,
+      "queries_fired": [
+        "a book",
+        "a keyboard",
+        "a red object"
+      ]
+    },
+    {
+      "file": "1305031473.196069.png",
+      "num_hits": 15,
+      "queries_fired": [
+        "a book",
+        "a cup",
+        "a keyboard",
+        "a red object",
+        "a remote control"
+      ]
+    }
+  ],
+  "query_hit_counts": {
+    "a bottle": 0,
+    "a cup": 2,
+    "a keyboard": 11,
+    "a book": 20,
+    "a remote control": 4,
+    "a red object": 2,
+    "the object on the left": 0
+  },
+  "total_hits": 39
+}

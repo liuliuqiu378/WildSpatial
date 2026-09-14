@@ -1,0 +1,45 @@
+{
+  "dataset": "NDISPark",
+  "split": "train",
+  "n_images": 112,
+  "n_instances": 2577,
+  "n_categories": 80,
+  "showcase": [
+    {
+      "label": "Night (dark)",
+      "instances": 11,
+      "vehicles": 11,
+      "luminance": 60.4
+    },
+    {
+      "label": "Night (dark)",
+      "instances": 21,
+      "vehicles": 21,
+      "luminance": 64.5
+    },
+    {
+      "label": "Night (dark)",
+      "instances": 12,
+      "vehicles": 12,
+      "luminance": 67.7
+    },
+    {
+      "label": "Day (bright)",
+      "instances": 6,
+      "vehicles": 6,
+      "luminance": 126.3
+    },
+    {
+      "label": "Day (bright)",
+      "instances": 10,
+      "vehicles": 10,
+      "luminance": 128.9
+    },
+    {
+      "label": "Day (bright)",
+      "instances": 5,
+      "vehicles": 5,
+      "luminance": 136.3
+    }
+  ]
+}

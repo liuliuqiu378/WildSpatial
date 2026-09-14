@@ -1,0 +1,166 @@
+{
+  "sequence": "fr1/desk",
+  "frame_rate_fps": 9.8,
+  "objects": [
+    {
+      "id": 0,
+      "class": "unknown (接 M7 OWL-ViT 标签)",
+      "position_m": [
+        -0.043,
+        0.004,
+        1.084
+      ],
+      "detections": 1
+    },
+    {
+      "id": 1,
+      "class": "unknown (接 M7 OWL-ViT 标签)",
+      "position_m": [
+        -0.864,
+        0.54,
+        -0.023
+      ],
+      "detections": 1
+    },
+    {
+      "id": 2,
+      "class": "unknown (接 M7 OWL-ViT 标签)",
+      "position_m": [
+        -0.676,
+        -0.125,
+        0.699
+      ],
+      "detections": 1
+    },
+    {
+      "id": 3,
+      "class": "unknown (接 M7 OWL-ViT 标签)",
+      "position_m": [
+        -0.623,
+        0.291,
+        0.114
+      ],
+      "detections": 1
+    },
+    {
+      "id": 4,
+      "class": "unknown (接 M7 OWL-ViT 标签)",
+      "position_m": [
+        -1.352,
+        0.589,
+        -1.206
+      ],
+      "detections": 1
+    },
+    {
+      "id": 5,
+      "class": "unknown (接 M7 OWL-ViT 标签)",
+      "position_m": [
+        -1.184,
+        0.136,
+        -1.131
+      ],
+      "detections": 1
+    },
+    {
+      "id": 6,
+      "class": "unknown (接 M7 OWL-ViT 标签)",
+      "position_m": [
+        -1.404,
+        0.479,
+        -0.847
+      ],
+      "detections": 1
+    },
+    {
+      "id": 7,
+      "class": "unknown (接 M7 OWL-ViT 标签)",
+      "position_m": [
+        -1.355,
+        0.259,
+        -0.46
+      ],
+      "detections": 1
+    },
+    {
+      "id": 8,
+      "class": "unknown (接 M7 OWL-ViT 标签)",
+      "position_m": [
+        -1.161,
+        0.408,
+        -0.679
+      ],
+      "detections": 1
+    },
+    {
+      "id": 9,
+      "class": "unknown (接 M7 OWL-ViT 标签)",
+      "position_m": [
+        -1.404,
+        -0.397,
+        -0.303
+      ],
+      "detections": 1
+    },
+    {
+      "id": 10,
+      "class": "unknown (接 M7 OWL-ViT 标签)",
+      "position_m": [
+        -0.957,
+        0.342,
+        -1.177
+      ],
+      "detections": 1
+    },
+    {
+      "id": 11,
+      "class": "unknown (接 M7 OWL-ViT 标签)",
+      "position_m": [
+        -1.281,
+        -0.845,
+        -0.817
+      ],
+      "detections": 1
+    },
+    {
+      "id": 12,
+      "class": "unknown (接 M7 OWL-ViT 标签)",
+      "position_m": [
+        -1.384,
+        -1.088,
+        -0.988
+      ],
+      "detections": 1
+    },
+    {
+      "id": 13,
+      "class": "unknown (接 M7 OWL-ViT 标签)",
+      "position_m": [
+        -1.373,
+        -0.828,
+        -1.304
+      ],
+      "detections": 1
+    },
+    {
+      "id": 14,
+      "class": "unknown (接 M7 OWL-ViT 标签)",
+      "position_m": [
+        -1.144,
+        -0.292,
+        -1.32
+      ],
+      "detections": 1
+    },
+    {
+      "id": 15,
+      "class": "unknown (接 M7 OWL-ViT 标签)",
+      "position_m": [
+        -1.985,
+        -0.583,
+        -1.847
+      ],
+      "detections": 1
+    }
+  ]
+}

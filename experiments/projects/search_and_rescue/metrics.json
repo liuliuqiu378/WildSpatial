@@ -1,0 +1,60 @@
+{
+  "project": "search_and_rescue",
+  "title": "退化环境搜救（合成退化模拟）",
+  "dataset": "fr1/desk + M3 合成退化（低光+运动模糊，模拟搜救/地下退化；已明确标注）",
+  "n_frames": 199,
+  "scenario": "degraded",
+  "has_depth": true,
+  "has_gt": true,
+  "stage_results": [
+    {
+      "name": "vo",
+      "ok": true,
+      "skipped": false,
+      "skip_reason": "",
+      "metrics": {
+        "n_valid_frames": 199,
+        "ate_rmse_m_up_to_scale": 0.8674,
+        "ms_per_frame": 31.4,
+        "fps": 31.8,
+        "feature": "sift",
+        "used_gt_odometry": false,
+        "_elapsed_s": 6.34
+      },
+      "note": "单目 VO 产出 up-to-scale 轨迹（199 帧有效），自由尺度 ATE=0.867m"
+    },
+    {
+      "name": "depth",
+      "ok": false,
+      "skipped": true,
+      "skip_reason": "VO 位移过小，尺度不可估（VO 退化）",
+      "metrics": {
+        "_elapsed_s": 0.0
+      },
+      "note": "单目 VO 在退化/弱纹理场景位移过小，无法用度量源定尺度（对应 M6：需 IMU/深度/多模态融合兜底）"
+    },
+    {
+      "name": "semantic",
+      "ok": false,
+      "skipped": true,
+      "skip_reason": "未检测到 OWL-ViT（设 OWLVIT_DIR 指向本地模型可启用）",
+      "metrics": {
+        "_elapsed_s": 2.32
+      },
+      "note": "降级：场景图使用几何标签 object"
+    },
+    {
+      "name": "scene_graph",
+      "ok": false,
+      "skipped": true,
+      "skip_reason": "VO 退化（轨迹塌缩），无法反投影",
+      "metrics": {
+        "_elapsed_s": 0.0
+      },
+      "note": "单目 VO 在退化/弱纹理场景塌缩，场景图无法构建（对应 M6：需 IMU/深度/多模态融合兜底）"
+    }
+  ],
+  "edge_budget": null,
+  "scene_graph": null,
+  "knowledge_bridge": "TUM fr3_nostructure 实测缺 rgb.txt/真值，无法定量评估；故用『带真值的 fr1/desk + M3 合成退化』可控地模拟搜救式退化环境。项目量化 M2 VO 在退化下的可行性边界（能否初始化、ATE 多少），并演示 M6 失效预警的必要性：一旦 VO 过『特征地板/分辨率悬崖』直接死，就必须靠多模态融合兜底。退化为合成施加，已在数据/图注中标注。"
+}

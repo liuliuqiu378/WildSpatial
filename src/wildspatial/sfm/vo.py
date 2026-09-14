@@ -61,6 +61,13 @@ class VOConfig:
     step_history: int = 10             # 用最近多少帧的位移中位数作参考
     verbose: bool = False
 
+    # ---- 可注入的「前端」：特征提取 + 匹配（默认 None = 经典 SIFT/ORB + 比值检验）----
+    # 设为 callable(ref, gray) -> (FeatureSet, matches (M,2)) 即可替换前端。
+    # 例：LightGlue 用 SuperPoint（学习式检测+描述）+ LightGlue（学习式匹配器）替换，
+    #     后端几何（RANSAC/三角化/PnP/尺度/护栏）完全复用，使「学习式匹配」成为
+    #     方法动物园里一个干净的对照维度。ref=None 表示首帧（无匹配）。
+    frontend: callable = None
+
 
 @dataclass
 class VOFrame:
@@ -100,8 +107,23 @@ class MonocularVO:
         idx = len(self.frames)
         gray = image if image.ndim == 2 else cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
 
-        fs = extract_features(gray, self.cfg.feature,
-                              max_features=self.cfg.max_features)
+        # 统一获取（特征, 匹配）：
+        #  · 默认：经典 SIFT/ORB + 比值检验
+        #  · 注入 cfg.frontend：学习式前端（如 SuperPoint+LightGlue），后端几何完全复用
+        if self.cfg.frontend is not None:
+            ref = (None if idx == 0 else
+                   (self.frames[self.init_ref_idx] if not self.initialized
+                    else self.frames[-1]))
+            fs, matches = self.cfg.frontend(ref, gray)
+        else:
+            fs = extract_features(gray, self.cfg.feature,
+                                  max_features=self.cfg.max_features)
+            matches = (np.zeros((0, 2), dtype=np.int32) if idx == 0 else
+                       match_ratio_test(
+                           (self.frames[self.init_ref_idx] if not self.initialized
+                            else self.frames[-1]).descriptors,
+                           fs.descriptors, ratio=self.cfg.ratio))
+
         frame = VOFrame(idx=idx, keypoints=fs.keypoints,
                         descriptors=fs.descriptors, image=gray, depth=depth)
 
@@ -118,8 +140,6 @@ class MonocularVO:
         # 未初始化时固定用**参考帧**做匹配（累积视差），已初始化后跟踪上一帧
         ref = self.frames[self.init_ref_idx] if not self.initialized else self.frames[-1]
         prev = ref
-        matches = match_ratio_test(prev.descriptors, fs.descriptors,
-                                   ratio=self.cfg.ratio)
         info["n_matches"] = len(matches)
 
         if len(matches) < self.cfg.min_inliers:

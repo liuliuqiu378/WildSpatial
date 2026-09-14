@@ -1,0 +1,11 @@
+{
+  "task": "2-class synthetic (low-freq vs high-freq), TinyCNN",
+  "fp32_acc": 1.0,
+  "int8_acc": 0.9975,
+  "acc_loss_pp": 0.25,
+  "fp32_latency_ms_batch": 1.23,
+  "int8_latency_ms_batch": 1.34,
+  "speedup_x": 0.92,
+  "engine": "fbgemm",
+  "quant": "INT8 static PTQ"
+}

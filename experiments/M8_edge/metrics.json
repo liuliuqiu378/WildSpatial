@@ -1,0 +1,116 @@
+{
+  "sequence": "fr1/desk",
+  "use_depth": false,
+  "tiers": [
+    {
+      "name": "Large",
+      "hw": "桌面/服务器 GPU 级",
+      "scale": 1.0,
+      "feature": "sift",
+      "max_features": 2000
+    },
+    {
+      "name": "Medium",
+      "hw": "Jetson Orin NX 级（最佳性价比）",
+      "scale": 0.5,
+      "feature": "orb",
+      "max_features": 1000
+    },
+    {
+      "name": "Small",
+      "hw": "RK3588 NPU 级（砍特征越过地板）",
+      "scale": 0.5,
+      "feature": "orb",
+      "max_features": 400
+    },
+    {
+      "name": "Tiny",
+      "hw": "超低功耗 MCU 级（砍分辨率越悬崖）",
+      "scale": 0.4,
+      "feature": "orb",
+      "max_features": 1000
+    }
+  ],
+  "results": [
+    {
+      "tier": "Large",
+      "hw": "桌面/服务器 GPU 级",
+      "scale": 1.0,
+      "feature": "sift",
+      "max_features": 2000,
+      "initialized": true,
+      "init_frame_idx": 3,
+      "n_processed": 67,
+      "latency_median_ms": 147.14,
+      "latency_mean_ms": 157.37,
+      "fps": 6.8,
+      "real_time_30fps": false,
+      "rel_compute_budget": 1.0,
+      "ate_rmse_m": 0.5668,
+      "ate_median_m": 0.5409,
+      "status": "OK",
+      "fail_reason": "",
+      "rel_acc_loss_vs_large_pct": 0.0
+    },
+    {
+      "tier": "Medium",
+      "hw": "Jetson Orin NX 级（最佳性价比）",
+      "scale": 0.5,
+      "feature": "orb",
+      "max_features": 1000,
+      "initialized": true,
+      "init_frame_idx": 5,
+      "n_processed": 67,
+      "latency_median_ms": 81.62,
+      "latency_mean_ms": 76.87,
+      "fps": 12.25,
+      "real_time_30fps": false,
+      "rel_compute_budget": 0.0437,
+      "ate_rmse_m": 0.3628,
+      "ate_median_m": 0.2739,
+      "status": "OK",
+      "fail_reason": "",
+      "rel_acc_loss_vs_large_pct": -36.0
+    },
+    {
+      "tier": "Small",
+      "hw": "RK3588 NPU 级（砍特征越过地板）",
+      "scale": 0.5,
+      "feature": "orb",
+      "max_features": 400,
+      "initialized": false,
+      "init_frame_idx": 0,
+      "n_processed": 67,
+      "latency_median_ms": 3.85,
+      "latency_mean_ms": 6.27,
+      "fps": 259.88,
+      "real_time_30fps": true,
+      "rel_compute_budget": 0.0175,
+      "ate_rmse_m": null,
+      "ate_median_m": null,
+      "status": "FAIL",
+      "fail_reason": "初始化失败：特征/匹配不足（特征数过低→特征地板）",
+      "rel_acc_loss_vs_large_pct": null
+    },
+    {
+      "tier": "Tiny",
+      "hw": "超低功耗 MCU 级（砍分辨率越悬崖）",
+      "scale": 0.4,
+      "feature": "orb",
+      "max_features": 1000,
+      "initialized": false,
+      "init_frame_idx": 0,
+      "n_processed": 67,
+      "latency_median_ms": 7.3,
+      "latency_mean_ms": 10.33,
+      "fps": 137.02,
+      "real_time_30fps": true,
+      "rel_compute_budget": 0.028,
+      "ate_rmse_m": null,
+      "ate_median_m": null,
+      "status": "FAIL",
+      "fail_reason": "初始化失败：特征/匹配不足（分辨率过低→分辨率悬崖）",
+      "rel_acc_loss_vs_large_pct": null
+    }
+  ]
+}

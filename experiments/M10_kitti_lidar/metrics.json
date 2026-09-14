@@ -1,0 +1,84 @@
+{
+  "dataset": "KITTI depth completion (val_selection_cropped, image_02)",
+  "n_panels": 4,
+  "depth_decode": "png/256.0 (m), 0=invalid",
+  "samples": [
+    {
+      "name": "2011_09_26_drive_0002_sync_image_0000000005_image_02.png",
+      "size": [
+        1216,
+        352
+      ],
+      "fx_fy_cx_cy": [
+        721.5,
+        721.5,
+        596.6,
+        149.9
+      ],
+      "lidar_sparse_points": 18970,
+      "lidar_depth_m": [
+        5.29,
+        78.12
+      ],
+      "gt_dense_points": 99247
+    },
+    {
+      "name": "2011_09_26_drive_0036_sync_image_0000000137_image_02.png",
+      "size": [
+        1216,
+        352
+      ],
+      "fx_fy_cx_cy": [
+        721.5,
+        721.5,
+        596.6,
+        149.9
+      ],
+      "lidar_sparse_points": 17906,
+      "lidar_depth_m": [
+        5.73,
+        79.07
+      ],
+      "gt_dense_points": 73113
+    },
+    {
+      "name": "2011_09_29_drive_0026_sync_image_0000000086_image_02.png",
+      "size": [
+        1216,
+        352
+      ],
+      "fx_fy_cx_cy": [
+        718.3,
+        718.3,
+        589.4,
+        159.5
+      ],
+      "lidar_sparse_points": 19118,
+      "lidar_depth_m": [
+        5.09,
+        79.67
+      ],
+      "gt_dense_points": 55156
+    },
+    {
+      "name": "2011_10_03_drive_0047_sync_image_0000000785_image_02.png",
+      "size": [
+        1216,
+        352
+      ],
+      "fx_fy_cx_cy": [
+        718.9,
+        718.9,
+        595.2,
+        161.2
+      ],
+      "lidar_sparse_points": 18618,
+      "lidar_depth_m": [
+        3.01,
+        79.54
+      ],
+      "gt_dense_points": 76969
+    }
+  ],
+  "note": "KITTI 真实 LiDAR 替代原 demo 的 RGB-D 反投影点云；velodyne_raw=真实稀疏激光、groundtruth_depth=真实稠密几何真值"
+}

@@ -21,6 +21,10 @@ venv/
 *.tgz
 *.zip
 
+# ===== 大体积中间产物（可重新生成；对应的 figs/metrics 仍进仓库）=====
+experiments/M2_recon/mesh.ply
+*.ply
+
 # ===== 说明 =====
 # experiments/ 内的 figs/ 与 metrics.json 会随代码一起提交，
 # 因为 docs/*.md 用相对路径引用这些图，必须进仓库才能在 GitHub 上正常显示。

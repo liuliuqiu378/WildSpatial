@@ -1,0 +1,100 @@
+{
+  "sequence": "fr1/desk",
+  "vo_ms_per_frame": 101.6,
+  "vo_fps": 9.8,
+  "keyframes_used": 6,
+  "raw_proposals": 16,
+  "scene_graph_objects": 16,
+  "instances_top": [
+    {
+      "id": 0,
+      "centroid_m": [
+        -0.043,
+        0.004,
+        1.084
+      ],
+      "n_detections": 1
+    },
+    {
+      "id": 1,
+      "centroid_m": [
+        -0.864,
+        0.54,
+        -0.023
+      ],
+      "n_detections": 1
+    },
+    {
+      "id": 2,
+      "centroid_m": [
+        -0.676,
+        -0.125,
+        0.699
+      ],
+      "n_detections": 1
+    },
+    {
+      "id": 3,
+      "centroid_m": [
+        -0.623,
+        0.291,
+        0.114
+      ],
+      "n_detections": 1
+    },
+    {
+      "id": 4,
+      "centroid_m": [
+        -1.352,
+        0.589,
+        -1.206
+      ],
+      "n_detections": 1
+    },
+    {
+      "id": 5,
+      "centroid_m": [
+        -1.184,
+        0.136,
+        -1.131
+      ],
+      "n_detections": 1
+    },
+    {
+      "id": 6,
+      "centroid_m": [
+        -1.404,
+        0.479,
+        -0.847
+      ],
+      "n_detections": 1
+    },
+    {
+      "id": 7,
+      "centroid_m": [
+        -1.355,
+        0.259,
+        -0.46
+      ],
+      "n_detections": 1
+    },
+    {
+      "id": 8,
+      "centroid_m": [
+        -1.161,
+        0.408,
+        -0.679
+      ],
+      "n_detections": 1
+    },
+    {
+      "id": 9,
+      "centroid_m": [
+        -1.404,
+        -0.397,
+        -0.303
+      ],
+      "n_detections": 1
+    }
+  ]
+}

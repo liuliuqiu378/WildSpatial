@@ -1,0 +1,19 @@
+{
+  "env": {
+    "ros2_packages": 313,
+    "key_packages": {
+      "nav2_bringup": true,
+      "nav2_navfn_planner": true,
+      "nav2_dwb_controller": true,
+      "nav2_mppi_controller": true,
+      "nav2_costmap_2d": true,
+      "slam_toolbox": true,
+      "tf2_ros": true
+    },
+    "rclpy": true
+  },
+  "p1_astar_path_steps": 131,
+  "nav2_navfn_available": false,
+  "nav2_note": "未调用（Nav2 规划器需在运行动作服务器中加载）",
+  "conclusion": "工业级 Nav2（navfn A*）与 P1 手搓 A* 是同一类算法；P1 的价值是『手搓一遍才懂』，Nav2 的价值是『生产级可配置』。"
+}

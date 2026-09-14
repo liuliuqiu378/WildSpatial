@@ -1,0 +1,74 @@
+{
+  "sequence": "TUM fr1/desk",
+  "detector": "facebook/detr-resnet-50",
+  "segmenter": "OpenCV GrabCut (seeded by DETR box)",
+  "frames": [
+    {
+      "file": "1305031452.791720.png",
+      "num_detections": 4,
+      "classes": [
+        "vase",
+        "keyboard",
+        "microwave",
+        "mouse"
+      ],
+      "grabcut_target": "keyboard"
+    },
+    {
+      "file": "1305031459.591695.png",
+      "num_detections": 4,
+      "classes": [
+        "keyboard",
+        "remote",
+        "microwave",
+        "keyboard"
+      ],
+      "grabcut_target": "remote"
+    },
+    {
+      "file": "1305031466.395784.png",
+      "num_detections": 11,
+      "classes": [
+        "mouse",
+        "microwave",
+        "keyboard",
+        "vase",
+        "couch",
+        "mouse",
+        "keyboard",
+        "remote",
+        "vase",
+        "cell phone",
+        "mouse"
+      ],
+      "grabcut_target": "microwave"
+    },
+    {
+      "file": "1305031473.196069.png",
+      "num_detections": 8,
+      "classes": [
+        "vase",
+        "vase",
+        "fork",
+        "N/A",
+        "vase",
+        "vase",
+        "microwave",
+        "cell phone"
+      ],
+      "grabcut_target": "cell phone"
+    }
+  ],
+  "class_histogram": {
+    "vase": 7,
+    "keyboard": 5,
+    "microwave": 4,
+    "mouse": 4,
+    "remote": 2,
+    "couch": 1,
+    "cell phone": 2,
+    "fork": 1,
+    "N/A": 1
+  },
+  "total_detections": 27
+}

@@ -1,0 +1,14 @@
+{
+  "sequence": "fr1/desk",
+  "tau": 0.3,
+  "frames": 67,
+  "degrade": "low_light",
+  "severity": 0.9,
+  "runtime_s": 3.25,
+  "ms_per_frame": 48.5,
+  "rescue_zone_ratio": 0.955,
+  "mean_inlier_ratio": 0.038,
+  "mean_features": 144.1,
+  "vo_ate_sim3_rmse_m": 0.7043,
+  "vo_ate_median_m": 0.668
+}

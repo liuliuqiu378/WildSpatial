@@ -1,0 +1,98 @@
+{
+  "project": "service_robot",
+  "title": "园区/室内服务机器人 感知→规划→控制 闭环",
+  "dataset": "TUM RGB-D fr1/desk（离线已下；演示算法链路，非真机器人数据）",
+  "n_frames": 150,
+  "scale_factor": 0.3727,
+  "metric_path_len_m": 7.481,
+  "occupancy": {
+    "shape": [
+      43,
+      38
+    ],
+    "res_m": 0.1,
+    "free_cells": 299,
+    "occupied_cells": 293
+  },
+  "plan": {
+    "path_steps": 39,
+    "goal_world": [
+      -1.04,
+      2.32
+    ]
+  },
+  "control": {
+    "n_cmds": 38,
+    "max_v": 0.3,
+    "max_abs_omega": 1.2,
+    "budget_limits": {
+      "a_max": 0.5,
+      "omega_max": 1.2
+    }
+  },
+  "dynamic_avoid": {
+    "n_avoid_steps": 5,
+    "n_obstacle_pts": 38,
+    "method": "velocity obstacle (VO)"
+  },
+  "scene_graph": {
+    "raw_proposals": 16,
+    "instances": 15
+  },
+  "stage_results": [
+    {
+      "name": "vo",
+      "ok": true,
+      "skipped": false,
+      "skip_reason": "",
+      "metrics": {
+        "n_valid_frames": 150,
+        "ate_rmse_m_up_to_scale": 0.7278,
+        "ms_per_frame": 93.4,
+        "fps": 10.7,
+        "feature": "sift",
+        "used_gt_odometry": false,
+        "_elapsed_s": 14.11
+      },
+      "note": "单目 VO 产出 up-to-scale 轨迹（150 帧有效），自由尺度 ATE=0.728m"
+    },
+    {
+      "name": "depth",
+      "ok": true,
+      "skipped": false,
+      "skip_reason": "",
+      "metrics": {
+        "has_depth_sensor": true,
+        "scale_factor": 0.3727,
+        "ate_rmse_m_metric": 0.7641,
+        "_elapsed_s": 0.0
+      },
+      "note": "以度量源标定尺度系数=0.373 → 公制 ATE=0.764m（数据集自带深度可直接提供该尺度）"
+    },
+    {
+      "name": "semantic",
+      "ok": true,
+      "skipped": false,
+      "skip_reason": "",
+      "metrics": {
+        "n_detections": 26,
+        "n_keyframes": 9,
+        "tool": "OWL-ViT open-vocabulary",
+        "_elapsed_s": 4.28
+      },
+      "note": "开放词汇检测 26 个候选（COCO 80 类之外的自由文本查询）"
+    },
+    {
+      "name": "scene_graph",
+      "ok": true,
+      "skipped": false,
+      "skip_reason": "",
+      "metrics": {
+        "raw_proposals": 16,
+        "instances": 15,
+        "_elapsed_s": 0.05
+      },
+      "note": "解构出 15 个 3D 物体实例（3 类语义标签）"
+    }
+  ]
+}

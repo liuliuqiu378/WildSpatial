@@ -1,0 +1,132 @@
+{
+  "sequence": "fr1/desk",
+  "vo_fps": 9.7,
+  "keyframes_used": 6,
+  "owl_queries": [
+    "a bottle",
+    "a cup",
+    "a keyboard",
+    "a book",
+    "a laptop",
+    "a monitor",
+    "a mouse",
+    "a chair",
+    "a notebook",
+    "a phone",
+    "a computer",
+    "a person"
+  ],
+  "owl_threshold": 0.25,
+  "raw_detections": 31,
+  "class_counts": {
+    "a monitor": 11,
+    "a keyboard": 7,
+    "a notebook": 6,
+    "a phone": 3,
+    "a laptop": 3,
+    "a book": 1
+  },
+  "scene_graph_objects": 21,
+  "instances_top": [
+    {
+      "id": 1,
+      "class": "a monitor",
+      "centroid_m": [
+        -0.823,
+        0.181,
+        -0.094
+      ],
+      "n_detections": 4
+    },
+    {
+      "id": 3,
+      "class": "a monitor",
+      "centroid_m": [
+        -1.178,
+        0.037,
+        -0.698
+      ],
+      "n_detections": 4
+    },
+    {
+      "id": 7,
+      "class": "a keyboard",
+      "centroid_m": [
+        -1.134,
+        0.565,
+        -0.147
+      ],
+      "n_detections": 2
+    },
+    {
+      "id": 8,
+      "class": "a keyboard",
+      "centroid_m": [
+        -1.122,
+        0.107,
+        -0.869
+      ],
+      "n_detections": 2
+    },
+    {
+      "id": 10,
+      "class": "a notebook",
+      "centroid_m": [
+        -0.047,
+        -0.042,
+        1.083
+      ],
+      "n_detections": 2
+    },
+    {
+      "id": 16,
+      "class": "a phone",
+      "centroid_m": [
+        -1.639,
+        0.174,
+        -0.367
+      ],
+      "n_detections": 2
+    },
+    {
+      "id": 0,
+      "class": "a monitor",
+      "centroid_m": [
+        -0.375,
+        -0.252,
+        1.008
+      ],
+      "n_detections": 1
+    },
+    {
+      "id": 2,
+      "class": "a monitor",
+      "centroid_m": [
+        -1.514,
+        -1.089,
+        1.42
+      ],
+      "n_detections": 1
+    },
+    {
+      "id": 4,
+      "class": "a monitor",
+      "centroid_m": [
+        -1.67,
+        -1.519,
+        -0.491
+      ],
+      "n_detections": 1
+    },
+    {
+      "id": 5,
+      "class": "a keyboard",
+      "centroid_m": [
+        -0.408,
+        0.221,
+        0.839
+      ],
+      "n_detections": 1
+    }
+  ]
+}

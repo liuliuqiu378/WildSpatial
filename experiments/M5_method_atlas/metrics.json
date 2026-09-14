@@ -1,0 +1,290 @@
+{
+  "seq": "fr1/desk",
+  "n_frames": 60,
+  "stride": 3,
+  "conditions": [
+    "clean",
+    "运动模糊-轻",
+    "运动模糊-中",
+    "运动模糊-重",
+    "高斯噪声-轻",
+    "高斯噪声-中",
+    "高斯噪声-重",
+    "低光照-轻",
+    "低光照-中",
+    "低光照-重",
+    "分辨率下降-轻",
+    "分辨率下降-中",
+    "分辨率下降-重"
+  ],
+  "matrix": {
+    "handcrafted_vo": {
+      "clean": {
+        "ate_rmse_m": 0.5285299491284089,
+        "ok": true,
+        "note": "自研 SIFT+VO（M1）：比值检验 + RANSAC + 三角化 + PnP + 运动护栏"
+      },
+      "运动模糊-轻": {
+        "ate_rmse_m": 0.12163024697390253,
+        "ok": true,
+        "note": "自研 SIFT+VO（M1）：比值检验 + RANSAC + 三角化 + PnP + 运动护栏"
+      },
+      "运动模糊-中": {
+        "ate_rmse_m": 0.6257796279464343,
+        "ok": true,
+        "note": "自研 SIFT+VO（M1）：比值检验 + RANSAC + 三角化 + PnP + 运动护栏"
+      },
+      "运动模糊-重": {
+        "ate_rmse_m": 0.6257796279464343,
+        "ok": true,
+        "note": "自研 SIFT+VO（M1）：比值检验 + RANSAC + 三角化 + PnP + 运动护栏"
+      },
+      "高斯噪声-轻": {
+        "ate_rmse_m": 0.23184891701400556,
+        "ok": true,
+        "note": "自研 SIFT+VO（M1）：比值检验 + RANSAC + 三角化 + PnP + 运动护栏"
+      },
+      "高斯噪声-中": {
+        "ate_rmse_m": 0.3733858569202236,
+        "ok": true,
+        "note": "自研 SIFT+VO（M1）：比值检验 + RANSAC + 三角化 + PnP + 运动护栏"
+      },
+      "高斯噪声-重": {
+        "ate_rmse_m": 0.6257796279464343,
+        "ok": true,
+        "note": "自研 SIFT+VO（M1）：比值检验 + RANSAC + 三角化 + PnP + 运动护栏"
+      },
+      "低光照-轻": {
+        "ate_rmse_m": 0.06189898824014962,
+        "ok": true,
+        "note": "自研 SIFT+VO（M1）：比值检验 + RANSAC + 三角化 + PnP + 运动护栏"
+      },
+      "低光照-中": {
+        "ate_rmse_m": 0.2533011134361213,
+        "ok": true,
+        "note": "自研 SIFT+VO（M1）：比值检验 + RANSAC + 三角化 + PnP + 运动护栏"
+      },
+      "低光照-重": {
+        "ate_rmse_m": 0.6257796279464343,
+        "ok": true,
+        "note": "自研 SIFT+VO（M1）：比值检验 + RANSAC + 三角化 + PnP + 运动护栏"
+      },
+      "分辨率下降-轻": {
+        "ate_rmse_m": 0.08819624206769987,
+        "ok": true,
+        "note": "自研 SIFT+VO（M1）：比值检验 + RANSAC + 三角化 + PnP + 运动护栏"
+      },
+      "分辨率下降-中": {
+        "ate_rmse_m": 0.38994543365732964,
+        "ok": true,
+        "note": "自研 SIFT+VO（M1）：比值检验 + RANSAC + 三角化 + PnP + 运动护栏"
+      },
+      "分辨率下降-重": {
+        "ate_rmse_m": 0.18584841347563202,
+        "ok": true,
+        "note": "自研 SIFT+VO（M1）：比值检验 + RANSAC + 三角化 + PnP + 运动护栏"
+      }
+    },
+    "colmap_sfm": {
+      "clean": {
+        "ate_rmse_m": 0.026405235413169588,
+        "ok": true,
+        "note": "COLMAP 增量式 SfM（工业级传统几何）"
+      },
+      "运动模糊-轻": {
+        "ate_rmse_m": 0.027601654507250203,
+        "ok": true,
+        "note": "COLMAP 增量式 SfM（工业级传统几何）"
+      },
+      "运动模糊-中": {
+        "ate_rmse_m": 0.027013095487943523,
+        "ok": true,
+        "note": "COLMAP 增量式 SfM（工业级传统几何）"
+      },
+      "运动模糊-重": {
+        "ate_rmse_m": 0.022392120171397387,
+        "ok": true,
+        "note": "COLMAP 增量式 SfM（工业级传统几何）"
+      },
+      "高斯噪声-轻": {
+        "ate_rmse_m": 0.055071983881048045,
+        "ok": true,
+        "note": "COLMAP 增量式 SfM（工业级传统几何）"
+      },
+      "高斯噪声-中": {
+        "ate_rmse_m": 0.521645390187261,
+        "ok": true,
+        "note": "COLMAP 增量式 SfM（工业级传统几何）"
+      },
+      "高斯噪声-重": {
+        "ate_rmse_m": 0.5031822350302158,
+        "ok": true,
+        "note": "COLMAP 增量式 SfM（工业级传统几何）"
+      },
+      "低光照-轻": {
+        "ate_rmse_m": 0.024459976391484877,
+        "ok": true,
+        "note": "COLMAP 增量式 SfM（工业级传统几何）"
+      },
+      "低光照-中": {
+        "ate_rmse_m": 0.05307293633698594,
+        "ok": true,
+        "note": "COLMAP 增量式 SfM（工业级传统几何）"
+      },
+      "低光照-重": {
+        "ate_rmse_m": 0.3119025371000799,
+        "ok": true,
+        "note": "COLMAP 增量式 SfM（工业级传统几何）"
+      },
+      "分辨率下降-轻": {
+        "ate_rmse_m": 0.026105702595584673,
+        "ok": true,
+        "note": "COLMAP 增量式 SfM（工业级传统几何）"
+      },
+      "分辨率下降-中": {
+        "ate_rmse_m": 0.025713046874145183,
+        "ok": true,
+        "note": "COLMAP 增量式 SfM（工业级传统几何）"
+      },
+      "分辨率下降-重": {
+        "ate_rmse_m": 0.026360261075301875,
+        "ok": true,
+        "note": "COLMAP 增量式 SfM（工业级传统几何）"
+      }
+    },
+    "vggt": {
+      "clean": {
+        "ate_rmse_m": 0.017973164236096937,
+        "ok": true,
+        "note": "VGGT 前馈 3D 基础模型（一次前向出相机轨迹）"
+      },
+      "运动模糊-轻": {
+        "ate_rmse_m": 0.018056032869941615,
+        "ok": true,
+        "note": "VGGT 前馈 3D 基础模型（一次前向出相机轨迹）"
+      },
+      "运动模糊-中": {
+        "ate_rmse_m": 0.02246557884562367,
+        "ok": true,
+        "note": "VGGT 前馈 3D 基础模型（一次前向出相机轨迹）"
+      },
+      "运动模糊-重": {
+        "ate_rmse_m": 0.038377594723966534,
+        "ok": true,
+        "note": "VGGT 前馈 3D 基础模型（一次前向出相机轨迹）"
+      },
+      "高斯噪声-轻": {
+        "ate_rmse_m": 0.01580541349821587,
+        "ok": true,
+        "note": "VGGT 前馈 3D 基础模型（一次前向出相机轨迹）"
+      },
+      "高斯噪声-中": {
+        "ate_rmse_m": 0.016550758359692237,
+        "ok": true,
+        "note": "VGGT 前馈 3D 基础模型（一次前向出相机轨迹）"
+      },
+      "高斯噪声-重": {
+        "ate_rmse_m": 0.01762616276187538,
+        "ok": true,
+        "note": "VGGT 前馈 3D 基础模型（一次前向出相机轨迹）"
+      },
+      "低光照-轻": {
+        "ate_rmse_m": 0.015744858767485582,
+        "ok": true,
+        "note": "VGGT 前馈 3D 基础模型（一次前向出相机轨迹）"
+      },
+      "低光照-中": {
+        "ate_rmse_m": 0.015584033658653629,
+        "ok": true,
+        "note": "VGGT 前馈 3D 基础模型（一次前向出相机轨迹）"
+      },
+      "低光照-重": {
+        "ate_rmse_m": 0.018747287158964607,
+        "ok": true,
+        "note": "VGGT 前馈 3D 基础模型（一次前向出相机轨迹）"
+      },
+      "分辨率下降-轻": {
+        "ate_rmse_m": 0.018589515922640226,
+        "ok": true,
+        "note": "VGGT 前馈 3D 基础模型（一次前向出相机轨迹）"
+      },
+      "分辨率下降-中": {
+        "ate_rmse_m": 0.020981452482307747,
+        "ok": true,
+        "note": "VGGT 前馈 3D 基础模型（一次前向出相机轨迹）"
+      },
+      "分辨率下降-重": {
+        "ate_rmse_m": 0.048849563924312674,
+        "ok": true,
+        "note": "VGGT 前馈 3D 基础模型（一次前向出相机轨迹）"
+      }
+    },
+    "lightglue_vo": {
+      "clean": {
+        "ate_rmse_m": 0.3051726563602197,
+        "ok": true,
+        "note": "SuperPoint+LightGlue 学习式前端 + M1 几何后端（单目 VO）"
+      },
+      "运动模糊-轻": {
+        "ate_rmse_m": 0.3039893662836517,
+        "ok": true,
+        "note": "SuperPoint+LightGlue 学习式前端 + M1 几何后端（单目 VO）"
+      },
+      "运动模糊-中": {
+        "ate_rmse_m": 0.33710591925473665,
+        "ok": true,
+        "note": "SuperPoint+LightGlue 学习式前端 + M1 几何后端（单目 VO）"
+      },
+      "运动模糊-重": {
+        "ate_rmse_m": 0.3701117319755159,
+        "ok": true,
+        "note": "SuperPoint+LightGlue 学习式前端 + M1 几何后端（单目 VO）"
+      },
+      "高斯噪声-轻": {
+        "ate_rmse_m": 0.48276620557202504,
+        "ok": true,
+        "note": "SuperPoint+LightGlue 学习式前端 + M1 几何后端（单目 VO）"
+      },
+      "高斯噪声-中": {
+        "ate_rmse_m": 0.3352960294765571,
+        "ok": true,
+        "note": "SuperPoint+LightGlue 学习式前端 + M1 几何后端（单目 VO）"
+      },
+      "高斯噪声-重": {
+        "ate_rmse_m": 0.279422175268926,
+        "ok": true,
+        "note": "SuperPoint+LightGlue 学习式前端 + M1 几何后端（单目 VO）"
+      },
+      "低光照-轻": {
+        "ate_rmse_m": 0.26167600953928394,
+        "ok": true,
+        "note": "SuperPoint+LightGlue 学习式前端 + M1 几何后端（单目 VO）"
+      },
+      "低光照-中": {
+        "ate_rmse_m": 0.38191606198789313,
+        "ok": true,
+        "note": "SuperPoint+LightGlue 学习式前端 + M1 几何后端（单目 VO）"
+      },
+      "低光照-重": {
+        "ate_rmse_m": 0.2823958718938617,
+        "ok": true,
+        "note": "SuperPoint+LightGlue 学习式前端 + M1 几何后端（单目 VO）"
+      },
+      "分辨率下降-轻": {
+        "ate_rmse_m": 0.15897481900050667,
+        "ok": true,
+        "note": "SuperPoint+LightGlue 学习式前端 + M1 几何后端（单目 VO）"
+      },
+      "分辨率下降-中": {
+        "ate_rmse_m": 0.41376192265894385,
+        "ok": true,
+        "note": "SuperPoint+LightGlue 学习式前端 + M1 几何后端（单目 VO）"
+      },
+      "分辨率下降-重": {
+        "ate_rmse_m": 0.27950113810670235,
+        "ok": true,
+        "note": "SuperPoint+LightGlue 学习式前端 + M1 几何后端（单目 VO）"
+      }
+    }
+  }
+}
