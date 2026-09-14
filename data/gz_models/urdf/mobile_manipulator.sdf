@@ -1,0 +1,148 @@
+<?xml version="1.0"?>
+<!--
+  P2 实验台：简化「移动操作机器人」(mobile manipulator)
+
+  为什么用自建简化模型（而非现成 UR5/Panda）：
+    本项目目标是**演示概念**（移动底盘 + 机械臂 = 移动操作），
+    而非复现某个具体商用机械臂；自建模型**零依赖、秒级加载**，教学价值最高。
+    真实 MoveIt 2 用法见 docs/P2_simulation.md 对应章节。
+
+  结构：
+    base_link（移动底盘，差速轮）
+      └─ arm_base_link（机械臂基座）
+           └─ arm_link_1（肩关节，绕 Y 轴转动）
+                └─ arm_link_2（肘关节，绕 Y 轴转动）
+                     └─ gripper_link（末端夹爪）
+-->
+<sdf version="1.6">
+  <model name="mobile_manipulator">
+    <pose>0 0 0.02 0 0 0</pose>
+
+    <!-- ============ 移动底盘 ============ -->
+    <link name="base_link">
+      <inertial>
+        <mass>5.0</mass>
+        <inertia><ixx>0.05</ixx><iyy>0.05</iyy><izz>0.08</izz></inertia>
+      </inertial>
+      <collision name="base_collision">
+        <geometry><box><size>0.30 0.24 0.10</size></box></geometry>
+      </collision>
+      <visual name="base_visual">
+        <geometry><box><size>0.30 0.24 0.10</size></box></geometry>
+        <material><diffuse>0.25 0.45 0.85 1</diffuse></material>
+      </visual>
+      <!-- RGB 相机（复用 §4.8 的经验：视觉感知的输入） -->
+      <sensor name="rgb_cam" type="camera">
+        <always_on>1</always_on>
+        <update_rate>10</update_rate>
+        <pose>0.16 0 0.10 0 0 0</pose>
+        <topic>camera/color/image_raw</topic>
+        <gz_frame_id>base_link</gz_frame_id>
+        <camera name="rgb_cam">
+          <horizontal_fov>1.047</horizontal_fov>
+          <image><width>640</width><height>480</height><format>R8G8B8</format></image>
+          <clip><near>0.05</near><far>100</far></clip>
+        </camera>
+      </sensor>
+    </link>
+
+    <!-- 车轮（视觉用；物理简单起见只做 visual+collision） -->
+    <link name="wheel_left">
+      <pose>-0.05 0.13 0.035 -1.5707 0 0</pose>
+      <inertial><mass>0.3</mass><inertia><ixx>0.001</ixx><iyy>0.001</iyy><izz>0.001</izz></inertia></inertial>
+      <collision name="c"><geometry><cylinder><radius>0.035</radius><length>0.02</length></cylinder></geometry></collision>
+      <visual name="v"><geometry><cylinder><radius>0.035</radius><length>0.02</length></cylinder></geometry>
+        <material><diffuse>0.1 0.1 0.1 1</diffuse></material></visual>
+    </link>
+    <link name="wheel_right">
+      <pose>-0.05 -0.13 0.035 -1.5707 0 0</pose>
+      <inertial><mass>0.3</mass><inertia><ixx>0.001</ixx><iyy>0.001</iyy><izz>0.001</izz></inertia></inertial>
+      <collision name="c"><geometry><cylinder><radius>0.035</radius><length>0.02</length></cylinder></geometry></collision>
+      <visual name="v"><geometry><cylinder><radius>0.035</radius><length>0.02</length></cylinder></geometry>
+        <material><diffuse>0.1 0.1 0.1 1</diffuse></material></visual>
+    </link>
+    <link name="caster"><pose>-0.14 0 0.02 0 0 0</pose>
+      <inertial><mass>0.05</mass><inertia><ixx>1e-5</ixx><iyy>1e-5</iyy><izz>1e-5</izz></inertia></inertial>
+      <collision name="c"><geometry><sphere><radius>0.02</radius></sphere></geometry></collision>
+    </link>
+
+    <joint name="wheel_left_joint" type="revolute">
+      <parent>base_link</parent><child>wheel_left</child>
+      <axis><xyz>0 0 1</xyz></axis>
+    </joint>
+    <joint name="wheel_right_joint" type="revolute">
+      <parent>base_link</parent><child>wheel_right</child>
+      <axis><xyz>0 0 1</xyz></axis>
+    </joint>
+    <joint name="caster_joint" type="fixed">
+      <parent>base_link</parent><child>caster</child>
+    </joint>
+
+    <!-- ============ 机械臂（3 自由度示意）============ -->
+    <link name="arm_base">
+      <pose>0 0 0.08 0 0 0</pose>
+      <inertial><mass>0.5</mass><inertia><ixx>0.001</ixx><iyy>0.001</iyy><izz>0.001</izz></inertia></inertial>
+      <visual name="v"><geometry><cylinder><radius>0.04</radius><length>0.06</length></cylinder></geometry>
+        <material><diffuse>0.8 0.3 0.2 1</diffuse></material></visual>
+    </link>
+    <joint name="arm_base_joint" type="fixed">
+      <parent>base_link</parent><child>arm_base</child>
+      <pose>0 0 0.08 0 0 0</pose>
+    </joint>
+
+    <link name="shoulder">
+      <pose>0 0 0.17 0 0 0</pose>
+      <inertial><mass>0.8</mass><inertia><ixx>0.003</ixx><iyy>0.003</iyy><izz>0.003</izz></inertia></inertial>
+      <visual name="v"><geometry><box><size>0.30 0.05 0.05</size></box></geometry>
+        <pose>0.11 0 0 0 0 0</pose>
+        <material><diffuse>0.9 0.6 0.1 1</diffuse></material></visual>
+      <collision name="c"><geometry><box><size>0.30 0.05 0.05</size></box></geometry>
+        <pose>0.11 0 0 0 0 0</pose></collision>
+    </link>
+    <joint name="shoulder_joint" type="revolute">
+      <parent>arm_base</parent><child>shoulder</child>
+      <pose>0 0 0.03 0 0 0</pose>
+      <axis><xyz>0 1 0</xyz></axis>
+      <limit><lower>-1.57</lower><upper>1.57</upper><effort>30</effort><velocity>1.0</velocity></limit>
+    </joint>
+
+    <link name="elbow">
+      <pose>0.22 0 0.17 0 0 0</pose>
+      <inertial><mass>0.5</mass><inertia><ixx>0.001</ixx><iyy>0.001</iyy><izz>0.001</izz></inertia></inertial>
+      <visual name="v"><geometry><box><size>0.20 0.04 0.04</size></box></geometry>
+        <pose>0.08 0 0 0 0 0</pose>
+        <material><diffuse>0.3 0.75 0.4 1</diffuse></material></visual>
+      <collision name="c"><geometry><box><size>0.20 0.04 0.04</size></box></geometry>
+        <pose>0.08 0 0 0 0 0</pose></collision>
+    </link>
+    <joint name="elbow_joint" type="revolute">
+      <parent>shoulder</parent><child>elbow</child>
+      <pose>0.22 0 0 0 0 0</pose>
+      <axis><xyz>0 1 0</xyz></axis>
+      <limit><lower>-1.57</lower><upper>1.57</upper><effort>20</effort><velocity>1.0</velocity></limit>
+    </joint>
+
+    <link name="gripper">
+      <pose>0.34 0 0.17 0 0 0</pose>
+      <inertial><mass>0.2</mass><inertia><ixx>0.0005</ixx><iyy>0.0005</iyy><izz>0.0005</izz></inertia></inertial>
+      <visual name="v"><geometry><box><size>0.06 0.08 0.02</size></box></geometry>
+        <material><diffuse>0.2 0.2 0.2 1</diffuse></material></visual>
+    </link>
+    <joint name="gripper_joint" type="fixed">
+      <parent>elbow</parent><child>gripper</child>
+      <pose>0.18 0 0 0 0 0</pose>
+    </joint>
+
+    <!-- 差速驱动插件（= 你问的 DiffDrive） -->
+    <plugin filename="gz-sim-diff-drive-system" name="gz::sim::systems::DiffDrive">
+      <left_joint>wheel_left_joint</left_joint>
+      <right_joint>wheel_right_joint</right_joint>
+      <wheel_separation>0.26</wheel_separation>
+      <wheel_radius>0.035</wheel_radius>
+      <topic>cmd_vel</topic>
+      <odom_topic>odom</odom_topic>
+      <frame_id>odom</frame_id>
+      <child_frame_id>base_link</child_frame_id>
+    </plugin>
+  </model>
+</sdf>

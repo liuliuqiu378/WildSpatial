@@ -646,6 +646,89 @@ xacro world.xacro headless:=false light:=0.05 fog_density:=0.1   # 夜间
 
 ---
 
+## 4.12 🔗 ROS2 名词速查 + 移动操作（mobile manipulation）实跑
+
+> **用户问题（2026-09-14）**："Gazebo 是通用机器人仿真器，机械臂 + 移动底盘都能搭（甚至 mobile manipulation）
+> 这个介绍演示一下；同时补充 DiffDrive/Nav2、ros2_control、OMPL（RRT/PRM）、A*、Nav2、ROS2 这些都是什么？"
+
+### 4.12.1 ROS2 词汇表（一次讲清）
+
+```
+┌────────────────── ROS2（中间件/通信骨架）──────────────────┐
+│  node 之间用 topic/service/action 通信（像"微信群收发消息"）  │
+│                                                            │
+│  ┌── 移动底盘侧 ────────┐    ┌── 机械臂侧 ─────────┐      │
+│  │ DiffDrive（差速驱动）  │    │ ros2_control（控制）  │      │
+│  │   ↓ /odom            │    │   ↓ 驱动关节          │      │
+│  │ Nav2（导航栈）        │    │ MoveIt 2（运动规划）  │      │
+│  │   ├─ A*（全局路径）    │    │   └─ OMPL（RRT/PRM）  │      │
+│  │   └─ DWA（局部避障）   │    │                       │      │
+│  └───────────────────────┘    └───────────────────────┘      │
+│     两者合体 = mobile manipulation（移动操作）               │
+└──────────────────────────────────────────────────────────────┘
+```
+
+| 名词 | 是什么 | 类比 |
+|---|---|---|
+| **ROS2** | 机器人**中间件**：节点用 topic/service/action 统一通信 | 微信群 + 快递系统 |
+| **DiffDrive** | Gazebo 插件：把 `cmd_vel`(v,ω) 变成左右轮转速 | 油门 + 方向盘 |
+| **Nav2** | ROS2 的**导航栈**（建图/定位/规划/避障工具包） | 导航 App（高德那套） |
+| **A\*** | **全局**路径规划（2D 栅格最短路径） | 规划整条路线 |
+| **ros2_control** | 统一**硬件控制框架**（换硬件只换驱动） | 驱动层（统一插口） |
+| **OMPL** | **运动规划库**：RRT/PRM 采样算法 | 关节空间撒点连线 |
+| **RRT / PRM** | 两种**采样式**规划（随机撒点） | 闭眼扔豆子连成路 |
+| **MoveIt 2** | ROS2 的**机械臂规划框架**（内部用 OMPL） | 机械臂动作大脑 |
+
+### 4.12.2 核心区分：A\* vs OMPL（RRT/PRM）
+
+| | **A\***（Nav2 用） | **OMPL / RRT / PRM**（MoveIt 用） |
+|---|---|---|
+| 空间 | **2D 栅格**（低维） | **6-7 维关节空间**（高维） |
+| 方法 | **遍历格子**求最优 | **随机采样**撒点连线 |
+| 为什么 | 2D 格子存得下 | 6 维格子**爆炸**（100⁶） |
+| 结果 | 最优路径 | 可行路径（不保证最优） |
+| 类比 | 走地图格子 | 闭眼扔豆子连成路 |
+
+### 4.12.3 实跑：A\* vs OMPL/自实现 RRT·PRM
+
+**环境**：已装 `moveit`（2.12.4）/ **`ompl`**（Python 绑定可用）/ `ros2_control` / `diff_drive_controller`。
+
+**产出**：`scripts/p2_mobile_manipulation.py` → `experiments/P2_mobile_manipulation/`
+
+| 方法 | 结果 |
+|---|---|
+| **A\***（2D 栅格） | **131 步**（遍历格子，最优） |
+| **OMPL**（真实库 RRTConnect/RRT/PRM） | ✅ 规划成功（50 点路径） |
+| **自实现 RRT**（带障碍） | **48 采样点**连成树→找到路径 |
+| **自实现 PRM**（带障碍） | 300 采样点建图→搜出路径 |
+
+![A* vs 关节空间](../experiments/P2_mobile_manipulation/figs/planner_compare.png)
+
+> ① 移动底盘：2D 栅格 A\*（走格子）；② 机械臂：关节空间采样（撒点连线）；③ 本质区别。
+> **同一个"规划"问题，因为维度不同，用了完全不同的武器。**
+
+![RRT/PRM 撒点](../experiments/P2_mobile_manipulation/figs/rrt_prm.png)
+
+> **左（RRT）**：48 个随机撒点连成树，**绕过圆形障碍**找到路径；
+> **右（PRM）**：300 点铺满空间建图再搜路。**这就是"撒点连线"的直观。**
+
+### 4.12.4 移动操作模型（Gazebo 可加载）
+
+自建 `data/gz_models/urdf/mobile_manipulator.sdf`（**底盘 + 3-DOF 臂 + RGB 相机**），
+经实测**可在 Gazebo 加载**，话题齐全：`/camera/color/image_raw`、`/cmd_vel`、
+`/odom`、**`/joint_states`（机械臂关节）**、`/world/default/pose/info`（真值位姿）。
+
+**mobile manipulation = 开过去（A\*/Nav2）+ 伸手拿（OMPL/MoveIt 2）**。
+
+> ⚠️ **已知绑定限制**：nanobind 版 `ompl` 传 Python 自定义 validity checker 会 `std::bad_cast`；
+> 故 OMPL 跑**自由空间**规划，**带障碍的采样可视化用 Python 自实现**（教学更清晰）。
+
+**诚实边界**：
+- 自建 3-DOF 臂用于**演示原理**（真实机械臂 6-7 DOF，方法相同）；
+- 完整 MoveIt 2 配置（SRDF/controller/planning pipeline）为下一步。
+
+---
+
 ## 5. 诚实边界
 
 - 本文的**平台对比**为业界公认事实；**接入方案**已核实 channel 可达与包存在，但**安装是否成功需实跑验证**（首次安装耗时长）。

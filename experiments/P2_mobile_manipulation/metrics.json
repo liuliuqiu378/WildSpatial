@@ -1,0 +1,29 @@
+{
+  "astar_grid_steps": 131,
+  "ompl_real_library": {
+    "RRTConnect": {
+      "ok": true,
+      "n_points": 50,
+      "length": 7.706,
+      "time_s": 0.007
+    },
+    "RRT": {
+      "ok": true,
+      "n_points": 50,
+      "length": 2.229,
+      "time_s": 0.0
+    },
+    "PRM": {
+      "ok": true,
+      "n_points": 50,
+      "length": 2.078,
+      "time_s": 0.001
+    }
+  },
+  "rrt_python_nodes": 48,
+  "rrt_python_path": 24,
+  "prm_python_path": 11,
+  "ompl_available": true,
+  "note": "A* 在 2D 栅格；OMPL/自实现 RRT·PRM 在 3D 关节空间；演示『走格子 vs 撒点』",
+  "mobile_manipulation_model": "data/gz_models/urdf/mobile_manipulator.sdf（底盘 + 3-DOF 臂，Gazebo 可加载）"
+}

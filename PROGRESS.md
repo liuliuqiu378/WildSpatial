@@ -285,6 +285,21 @@ GitHub 仓库   https://github.com/liuliuqiu378/WildSpatial  （已 git init，�
 
 ## 5. 日志（倒序追加）
 
+### 2026-09-14（续40）· P2 移动操作（mobile manipulation）+ ROS2 名词速查 + OMPL 实跑
+- **A. 新增 §4.12**：ROS2 词汇表（ROS2/DiffDrive/Nav2/A*/ros2_control/OMPL/RRT/PRM/MoveIt2）+ A* vs OMPL 核心区分 + 移动操作实跑。
+- **B. 安装 MoveIt 生态**：`ros-jazzy-moveit`(2.12.4) + `ros2_control`(4.47) + `ompl` 全部就位
+  → `moveit_planners_ompl` / **`ompl`（Python 绑定可用）** / `diff_drive_controller` / `joint_state_broadcaster`。
+- **C. 实跑**（`scripts/p2_mobile_manipulation.py` → `experiments/P2_mobile_manipulation/`）：
+  - **A\*（2D 栅格）131 步**；**OMPL 真实库** RRTConnect/RRT/PRM 规划成功（50 点）；
+  - **自实现 RRT**（48 采样点连树绕障）+ **PRM**（300 点建图搜路）→ 出"撒点连线"可视化；
+  - 出图：A* vs 关节空间对比、RRT/PRM 撒点图。
+- **D. 自建移动操作模型** `data/gz_models/urdf/mobile_manipulator.sdf`（底盘+3-DOF 臂+RGB 相机）：
+  实测 Gazebo 可加载，话题 `/camera/color/image_raw` `/cmd_vel` `/odom` **`/joint_states`** `/world/default/pose/info`。
+- **⚠️ 绑定坑**：nanobind 版 `ompl` 传 Python 自定义 validity checker → `std::bad_cast`；
+  改用 `space.allocState()` 构造状态 + 自由空间规划 + Python 自实现带障碍采样（绕开绑定）。
+- **教学价值**：把 §3.5.5 的"A*(2D) vs OMPL(高维)"**真实跑出来**，"走格子 vs 撒点"看得见。
+- **联动**：`docs/P2_simulation.md §4.12`；`00_INDEX.md` 图索引 +2；本文件续40。
+
 ### 2026-09-14（续39）· P2 §3.6 同源模型洞察 + 物理级退化 + 真值轨迹 + 场景映射
 - **A. 新增 §3.6「仿真与真实：同源模型 + 解构方法论」**（用户洞察系统化）：
   - **同源**：仿真与真实共享同一套底层模型（几何/物理/光照/传感器）；
