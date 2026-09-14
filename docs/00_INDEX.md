@@ -121,6 +121,7 @@ F4（你的知识地图，先建立信心）→ F0 → F1 → F2 → F3（4 篇�
 | **P1 四场景真实数据样例**（扫地/行人/无人船） | `experiments/p1_datasets_showcase/figs/p1_scene_samples.png` | **DATASETS, P1** |
 | **P2 工业级 Nav2 规划器 vs P1 手搓 A\*** | `experiments/P2_ros2/figs/navfn_vs_p1.png` | **P2** |
 | **P2 TB3 无头闭环：LiDAR→膨胀→costmap** | `experiments/P2_tb3_nav2/figs/costmap_concept.png` | **P2** |
+| **P2 感知实验台：仿真相机→真值深度** | `experiments/P2_gz_perception/figs/gazebo_rgbd.png` | **P2, M4** |
 
 ### 📷 一屏看懂本项目做了什么（精选图墙，按主线顺序）
 
