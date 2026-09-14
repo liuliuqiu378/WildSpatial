@@ -285,6 +285,21 @@ GitHub 仓库   https://github.com/liuliuqiu378/WildSpatial  （已 git init，�
 
 ## 5. 日志（倒序追加）
 
+### 2026-09-14（续42）· 🎯 P2 动态障碍完整工程 demo（仿真→感知→决策→控制）
+- **动因**：用户要求"动态障碍（SDF 加会动的行人 → 对应 P1 动态避障），建一个完整演示 demo，各维度数据利用"。
+- **产出**：`data/gz_models/worlds/dynamic_pedestrian.sdf.xacro`（含 **2 个真实物理运动的行人**）+
+  `scripts/p2_dynamic_obstacle.py` → `experiments/P2_dynamic_obstacle/`。
+- **五层数据流**：① 传感（相机/LiDAR/真值位姿）→ ② 感知（算行人距离）→ ③ 决策（<1.2m 避让）→
+  ④ 控制（输出 cmd_vel）→ ⑤ 物理反馈（Gazebo 推进，闭环）。
+- **实测**：闭环 **735 步**，触发避让 **562 步**（76%），最近行人距离 **1.126m**，行人 2 个；
+  **出现"正常前进(v=0.18) → 第7秒骤降 → v≈0/ω=0.3 避让"的完整决策曲线**。
+- **出图 3 张**：五层数据流总览、行人距离 vs 避障指令、多传感器视角（相机 vs LiDAR）。
+- **与 P1 的区别**：P1 行人=脚本模拟匀速直线；本 demo 行人=**Gazebo 真实物理体**（质量/碰撞/速度），
+  机器人用**真实传感器**感知 → 在线闭环。
+- **⚠️ 踩坑（Gazebo 驱动动态物体三方案）**：① `TrajectoryFollower` 受物理约束不动；
+  ② `gz service set_pose` headless 下服务发现受限；③ ✅ **`VelocityControl` + 无摩擦(mu=0)** 稳定驱动。
+- **联动**：`docs/P2_simulation.md §4.14`；`00_INDEX.md` 图索引 +2；本文件续42。
+
 ### 2026-09-14（续41）· P2 感知实验台（四）：多传感器同步（相机+LiDAR+IMU）— M6/F5 落点
 - **新增 §4.13** + `scripts/p2_gz_multisensor.py` → `experiments/P2_gz_multisensor/`：
   - **关键技术**：跨两侧订阅——RGB/深度相机在 **gz 侧**（用 `gz.transport13`），

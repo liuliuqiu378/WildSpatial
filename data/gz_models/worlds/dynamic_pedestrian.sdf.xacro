@@ -1,0 +1,115 @@
+<?xml version="1.0"?>
+<sdf version="1.6" xmlns:xacro="http://www.ros.org/wiki/xacro">
+  <!--
+    P2 感知实验台：动态障碍世界（会横穿的行人）
+
+    为什么做这个：
+      P1 的"动态避障"用的是**自己模拟的匀速直线行人**；本世界提供一个
+      **Gazebo 里真实物理运动的行人**（由 TrajectoryFollower 插件驱动），
+      机器人用**真实传感器（相机/LiDAR）**感知它 → 触发避障决策。
+
+    这就是 §4.14 说的"各维度数据利用"的完整工程展示：
+      仿真世界 → 传感器 → 感知 → 决策 → 控制 → 物理反馈（闭环）
+
+    行人运动：沿 +Y 方向匀速横穿，到边界后往返（往复运动）。
+  -->
+  <xacro:arg name="headless" default="false"/>
+  <xacro:arg name="light" default="0.8"/>
+  <xacro:arg name="ped_speed" default="0.35"/>   <!-- 行人速度 m/s -->
+  <xacro:arg name="ped_y0" default="-1.5"/>      <!-- 行人起始 Y -->
+  <xacro:arg name="ped_y1" default="1.5"/>       <!-- 行人终点 Y -->
+
+  <world name="default">
+    <plugin filename="gz-sim-physics-system" name="gz::sim::systems::Physics"/>
+    <plugin filename="gz-sim-user-commands-system" name="gz::sim::systems::UserCommands"/>
+    <xacro:unless value="$(arg headless)">
+      <plugin filename="gz-sim-scene-broadcaster-system" name="gz::sim::systems::SceneBroadcaster"/>
+    </xacro:unless>
+    <plugin filename="gz-sim-sensors-system" name="gz::sim::systems::Sensors">
+      <render_engine>ogre2</render_engine>
+    </plugin>
+    <plugin filename="gz-sim-imu-system" name="gz::sim::systems::Imu"/>
+    <!-- ⚠️ TrajectoryFollower 必须挂在 model 内（挂 world 会报 No <link_name>） -->
+
+    <light name='sun' type='directional'>
+      <cast_shadows>0</cast_shadows>
+      <pose>0 0 10 0 0 0</pose>
+      <diffuse>$(arg light) $(arg light) $(arg light) 1</diffuse>
+      <specular>$(arg light) $(arg light) $(arg light) 1</specular>
+      <direction>-0.5 0.1 -0.9</direction>
+    </light>
+
+    <model name='ground_plane'>
+      <static>1</static>
+      <link name='link'>
+        <collision name='collision'>
+          <geometry><plane><normal>0 0 1</normal><size>100 100</size></plane></geometry>
+        </collision>
+        <visual name='visual'>
+          <geometry><plane><normal>0 0 1</normal><size>100 100</size></plane></geometry>
+          <material><ambient>0.8 0.8 0.8 1</ambient><diffuse>0.8 0.8 0.8 1</diffuse>
+            <specular>0.8 0.8 0.8 1</specular></material>
+        </visual>
+      </link>
+    </model>
+
+    <scene><shadows>0</shadows></scene>
+    <physics name='3ms' type='ode'>
+      <max_step_size>0.003</max_step_size><real_time_factor>1</real_time_factor>
+    </physics>
+
+    <!-- TB3 世界（含迷宫墙） -->
+    <model name="turtlebot3_world">
+      <static>1</static>
+      <include><uri>model://turtlebot3_world</uri></include>
+    </model>
+
+    <!-- ============ 动态行人：VelocityControl 驱动（持续 Y 速度）============ -->
+    <!-- 为什么用 VelocityControl：TrajectoryFollower 受物理约束不动；   -->
+    <!-- VelocityControl 直接给刚体施加速度 → 稳定产生"横穿行人"。      -->
+    <!-- 行人放在机器人前方的开阔区（避开迷宫墙），沿 +Y 滑行穿过视野 -->
+    <model name="pedestrian">
+      <pose>1.2 $(arg ped_y0) 0.45 0 0 0</pose>
+      <link name="body">
+        <inertial>
+          <mass>60</mass>
+          <inertia><ixx>6</ixx><iyy>6</iyy><izz>6</izz></inertia>
+        </inertial>
+        <collision name="c">
+          <geometry><cylinder><radius>0.22</radius><length>0.9</length></cylinder></geometry>
+          <surface><friction><ode><mu>0</mu><mu2>0</mu2></ode></friction>
+            <contact><ode><kp>1e4</kp><kd>1</kd></ode></contact></surface>
+        </collision>
+        <visual name="v">
+          <geometry><cylinder><radius>0.22</radius><length>0.9</length></cylinder></geometry>
+          <material><diffuse>0.85 0.15 0.15 1</diffuse></material>
+        </visual>
+      </link>
+      <!-- VelocityControl：持续施加速度（initial_linear 给初速，无摩擦时近似匀速滑行） -->
+      <plugin filename="gz-sim-velocity-control-system"
+              name="gz::sim::systems::VelocityControl">
+        <link_name>body</link_name>
+        <initial_linear>0 $(arg ped_speed) 0</initial_linear>
+      </plugin>
+    </model>
+
+    <!-- 第二个行人（反向横穿，演示多动态障碍） -->
+    <model name="pedestrian2">
+      <pose>2.0 $(arg ped_y1) 0.45 0 0 0</pose>
+      <link name="body">
+        <inertial><mass>60</mass><inertia><ixx>6</ixx><iyy>6</iyy><izz>6</izz></inertia></inertial>
+        <collision name="c"><geometry><cylinder><radius>0.22</radius><length>0.9</length></cylinder></geometry>
+          <surface><friction><ode><mu>0</mu><mu2>0</mu2></ode></friction></surface>
+        </collision>
+        <visual name="v"><geometry><cylinder><radius>0.22</radius><length>0.9</length></cylinder></geometry>
+          <material><diffuse>0.15 0.35 0.85 1</diffuse></material></visual>
+      </link>
+      <plugin filename="gz-sim-velocity-control-system"
+              name="gz::sim::systems::VelocityControl">
+        <link_name>body</link_name>
+        <initial_linear>0 -$(arg ped_speed) 0</initial_linear>
+      </plugin>
+    </model>
+
+  </world>
+</sdf>
