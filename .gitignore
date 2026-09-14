@@ -26,6 +26,8 @@ venv/
 # ===== 大体积中间产物（可重新生成；对应的 figs/metrics 仍进仓库）=====
 experiments/M2_recon/mesh.ply
 *.ply
+# GIF 的中间帧（GIF/MP4 本身进仓库，帧可由脚本重新生成）
+experiments/**/gif_frames/
 
 # ===== 说明 =====
 # experiments/ 内的 figs/ 与 metrics.json 会随代码一起提交，

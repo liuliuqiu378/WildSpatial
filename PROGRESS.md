@@ -285,6 +285,14 @@ GitHub 仓库   https://github.com/liuliuqiu378/WildSpatial  （已 git init，�
 
 ## 5. 日志（倒序追加）
 
+### 2026-09-14（续43）· 🎬 P2 动态障碍闭环 **GIF 动图**（让"运动"看得见）
+- **用户反馈**："做得好，但看不到、感受不到，能不能做成视频或动图全景展示？" —— **静态图确实看不到运动**。
+- **产出** `scripts/p2_dynamic_obstacle_gif.py` → `experiments/P2_dynamic_obstacle/figs/`：
+  - **`closed_loop.gif`（142 帧，448×416，0.79MB）+ `closed_loop.mp4`（0.42MB）**；
+  - 每帧含：机器人（蓝方块+轨迹）/ 行人（红圆）/ **危险半径圈** / **状态框（GO 绿 / AVOID 红实时切换）** / 实时指标（t/v/ω/最近距离）。
+- **效果**：如同"比赛俯视回放"，一眼看懂**行人靠近→进入危险圈→状态变红→v 掉下来/ω 抬起来**的完整决策过程。
+- **联动**：`docs/P2_simulation.md §4.14.3b`（嵌 GIF）；`.gitignore` 排除 `gif_frames/`（5.2M 中间帧，可重生成）；本文件续43。
+
 ### 2026-09-14（续42）· 🎯 P2 动态障碍完整工程 demo（仿真→感知→决策→控制）
 - **动因**：用户要求"动态障碍（SDF 加会动的行人 → 对应 P1 动态避障），建一个完整演示 demo，各维度数据利用"。
 - **产出**：`data/gz_models/worlds/dynamic_pedestrian.sdf.xacro`（含 **2 个真实物理运动的行人**）+
