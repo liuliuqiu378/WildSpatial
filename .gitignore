@@ -1,5 +1,7 @@
 # ===== 数据：体积大，不进 git（见 PROGRESS.md 约定）=====
-data/
+# 注意：只排除仓库根的 data/（不能写裸 `data/`，会连 src/wildspatial/data 源码一起排除）
+/data/*
+!/data/gz_models/
 
 # ===== Python 缓存 / 字节码 =====
 __pycache__/

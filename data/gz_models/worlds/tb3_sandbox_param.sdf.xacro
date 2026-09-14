@@ -1,0 +1,87 @@
+<?xml version="1.0"?>
+<sdf version="1.6" xmlns:xacro="http://www.ros.org/wiki/xacro">
+  <!--
+    P2 感知实验台：参数化世界（物理级光照/雾退化）
+
+    与原始 tb3_sandbox 的区别：把「光照强度」和「雾」做成 xacro 参数，
+    这样**同一个世界**可以通过参数切换成：正常 / 低光 / 雾天 / 夜间。
+    这是「物理级退化」——由 Gazebo 渲染引擎真实计算，而非事后 P 图。
+
+    用法：
+      xacro world.xacro light:=0.15 fog_density:=0.0   # 低光
+      xacro world.xacro light:=0.8  fog_density:=0.6   # 雾天
+  -->
+  <xacro:arg name="headless" default="true"/>
+  <xacro:arg name="light" default="0.8"/>       <!-- 太阳光 diffuse 强度 0~1 -->
+  <xacro:arg name="fog_density" default="0.0"/> <!-- 雾密度 0~1 -->
+  <xacro:arg name="fog_color" default="0.9 0.9 0.9"/>  <!-- 雾颜色 -->
+
+  <world name="default">
+    <plugin filename="gz-sim-physics-system" name="gz::sim::systems::Physics"/>
+    <plugin filename="gz-sim-user-commands-system" name="gz::sim::systems::UserCommands"/>
+    <xacro:unless value="$(arg headless)">
+      <plugin filename="gz-sim-scene-broadcaster-system"
+              name="gz::sim::systems::SceneBroadcaster"/>
+    </xacro:unless>
+    <plugin filename="gz-sim-sensors-system" name="gz::sim::systems::Sensors">
+      <render_engine>ogre2</render_engine>
+    </plugin>
+    <plugin filename="gz-sim-imu-system" name="gz::sim::systems::Imu"/>
+
+    <!-- ===== 参数化光照：light 越小越暗（低光/夜间）===== -->
+    <light name='sun' type='directional'>
+      <cast_shadows>0</cast_shadows>
+      <pose>0 0 10 0 0 0</pose>
+      <diffuse>$(arg light) $(arg light) $(arg light) 1</diffuse>
+      <specular>$(arg light) $(arg light) $(arg light) 1</specular>
+      <attenuation>
+        <range>1000</range>
+        <constant>0.9</constant>
+        <linear>0.01</linear>
+        <quadratic>0.001</quadratic>
+      </attenuation>
+      <direction>-0.5 0.1 -0.9</direction>
+    </light>
+
+    <model name='ground_plane'>
+      <static>1</static>
+      <link name='link'>
+        <collision name='collision'>
+          <geometry><plane><normal>0 0 1</normal><size>100 100</size></plane></geometry>
+          <max_contacts>10</max_contacts>
+        </collision>
+        <visual name='visual'>
+          <geometry><plane><normal>0 0 1</normal><size>100 100</size></plane></geometry>
+          <material>
+            <ambient>0.8 0.8 0.8 1</ambient>
+            <diffuse>0.8 0.8 0.8 1</diffuse>
+            <specular>0.8 0.8 0.8 1</specular>
+          </material>
+        </visual>
+      </link>
+    </model>
+
+    <!-- ===== 参数化雾：fog_density>0 时开启（物理级，非 P 图）===== -->
+    <scene>
+      <shadows>0</shadows>
+      <ambient>$(arg light) $(arg light) $(arg light) 1</ambient>
+      <fog>
+        <type>linear</type>
+        <color>$(arg fog_color) 1</color>
+        <density>$(arg fog_density)</density>
+        <start>1.0</start>
+        <end>30.0</end>
+      </fog>
+    </scene>
+
+    <physics name='3ms' type='ode'>
+      <max_step_size>0.003</max_step_size>
+      <real_time_factor>1</real_time_factor>
+    </physics>
+
+    <model name="turtlebot3_world">
+      <static>1</static>
+      <include><uri>model://turtlebot3_world</uri></include>
+    </model>
+  </world>
+</sdf>

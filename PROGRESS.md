@@ -285,6 +285,23 @@ GitHub 仓库   https://github.com/liuliuqiu378/WildSpatial  （已 git init，�
 
 ## 5. 日志（倒序追加）
 
+### 2026-09-14（续39）· P2 §3.6 同源模型洞察 + 物理级退化 + 真值轨迹 + 场景映射
+- **A. 新增 §3.6「仿真与真实：同源模型 + 解构方法论」**（用户洞察系统化）：
+  - **同源**：仿真与真实共享同一套底层模型（几何/物理/光照/传感器）；
+  - **解构**：一切方法的本质是把真实世界"解构"成结构化表示（几何/语义/学习式三条路径）；
+  - **三种关系**：sim2real / **real2sim（3DGS/NeRF，正是"把真实解构成仿真"）** / 仿真=验证台（本项目）。
+- **B. 物理级退化（`scripts/p2_gz_physical_degrade.py` → `experiments/P2_gz_physical/`）**：
+  - 参数化世界 SDF（`data/gz_models/worlds/tb3_sandbox_param.sdf.xacro`）：`light`+`fog_density` 作 xacro 参数；
+  - **同一世界 × 4 条件**：正常(亮度107)/低光(47)/雾天/夜间(25)，由 Gazebo **渲染引擎真实计算**（非 P 图）；
+  - 出图：物理条件对比、**物理级 vs 事后P图**（前者光照更自洽）。
+  - ⚠️ 踩坑：`headless:=true` 会禁 SceneBroadcaster → 真值位姿话题不发；改 `headless:=false` 解决。
+- **C. 真值轨迹（ATE 免费参考）**：采 `/world/default/pose/info` → 机器人走圆弧 **557 个真值姿态点**。
+- **D. 新增 §4.11「仿真 × 四场景 × 操作任务 能力映射」**：
+  - 扫地/送物/自驾/无人船 各自的仿真搭法与所需能力；
+  - **操作类（取物）能结合**——Gazebo 支持机械臂，但工具链不同（Nav2 vs **MoveIt 2 + OMPL**，印证 §3.5.5 高维采样）；
+  - 统一视角：所有场景都是"把世界解构成结构化表示再决策"。
+- **联动**：`docs/P2_simulation.md`（§3.6 + §4.10 + §4.11）；`00_INDEX.md` 图索引 +4；本文件续39。
+
 ### 2026-09-14（续38）· 🎯 P2 感知实验台实战：仿真 RGB-D + 可控退化 + VGGT 重建
 - **A. 给 TB3 注入 RGB 相机**：原 TB3 SDF **只有深度相机** → 复制 SDF 到 `data/gz_models/urdf/` 注入
   RGB 相机（640×480，FOV 60°），用 `spawn_tb3.launch.py robot_sdf:=<path>` 覆盖（不改原包）。

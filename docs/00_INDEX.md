@@ -125,6 +125,9 @@ F4（你的知识地图，先建立信心）→ F0 → F1 → F2 → F3（4 篇�
 | **P2 仿真 RGB-D 多帧采集（边走边采）** | `experiments/P2_gz_sense_degrade/figs/gz_rgbd_frames.png` | **P2** |
 | **P2 可控退化图库（低光/雾/噪声）** | `experiments/P2_gz_sense_degrade/figs/degradation_gallery.png` | **P2, M5** |
 | **P2 VGGT 重建 vs 仿真真值深度** | `experiments/P2_gz_vggt/figs/vggt_vs_gt_depth.png` | **P2, M4** |
+| **P2 物理级退化（光照/雾 4 条件）** | `experiments/P2_gz_physical/figs/physical_conditions.png` | **P2, M5** |
+| **P2 物理级 vs 事后P图 对比** | `experiments/P2_gz_physical/figs/physical_vs_synthetic.png` | **P2, M5** |
+| **P2 仿真真值轨迹（ATE 免费参考）** | `experiments/P2_gz_physical/figs/gt_trajectory.png` | **P2, M1** |
 
 ### 📷 一屏看懂本项目做了什么（精选图墙，按主线顺序）
 
