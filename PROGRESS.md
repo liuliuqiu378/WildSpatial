@@ -285,6 +285,25 @@ GitHub 仓库   https://github.com/liuliuqiu378/WildSpatial  （已 git init，�
 
 ## 5. 日志（倒序追加）
 
+### 2026-09-14（续36）· ✅ TurtleBot3 + Nav2 无头闭环 demo（服务器无 GUI）
+- **关键工程问题**：本机**无 DISPLAY**（`$DISPLAY` 空）→ Gazebo GUI 开不了。
+  **解法**：`gz sim --headless-rendering -s -r`（服务器无头渲染，工业界标准做法）+
+  `GZ_SIM_RESOURCE_PATH` 指向 models（否则 `model://turtlebot3_world` 找不到）。
+- **实测（`scripts/p2_tb3_nav2_demo.py` → `experiments/P2_tb3_nav2/`）**：
+  - Gazebo 无头启动 ✅（仅 Ogre 材质警告）；TB3 生成 ✅（`/imu`、`/scan` 就绪）；
+  - **真实 LiDAR：360 束全部有效**，最近障碍 **0.49 m**、最远 **4.69 m**、量程 0–20 m。
+  - ⚠️ 坑：`gz sim` 找不到 `model://` → 必须设 `GZ_SIM_RESOURCE_PATH=<models>:<share>`。
+- **可视化 `figs/costmap_concept.png`**（三子图，详细讲解已写进 P2 §4.6）：
+  ① 真实 LiDAR 360 点（**能反推出 Gazebo 世界是"四面墙+柱子"的房间**）；
+  ② 障碍 + **膨胀带**（Nav2 `inflation_layer` 概念）；
+  ③ `static + obstacle + inflation` 三层叠加成一张 costmap。
+- **教学价值**：**实物证据**验证了 §3.5.3「静态导入 + 动态感知在同一个 costmap 里融合」的论断；
+  直观回答"机器人没有地图，只有一圈距离读数，costmap 是这么长出来的"。
+- **诚实边界**：**完整 Nav2 BT 导航栈未跑通**（需更多运行时配置）；
+  已验证的是 Gazebo 世界 + TB3 传感器 + costmap 概念，**不冒充"全链路导航完成"**。
+- **联动**：`docs/P2_simulation.md §4.6`；`00_INDEX.md` 图索引；本文件续36。
+- **下一步**：补齐 Nav2 参数/生命周期 → 跑通"发目标点→自动导航"；再对比 P1 路径。
+
 ### 2026-09-14（续35）· ✅ ROS2 Jazzy + Nav2 安装成功并跑通（免 sudo）
 - **结果**：`ros2jazzy` 环境（6.8G，313 个 ROS2 包）**全部就位**：
   `nav2_bringup` / `nav2_navfn_planner`（全局 A\*）/ `nav2_dwb_controller`（局部 DWA）/

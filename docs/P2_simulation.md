@@ -287,6 +287,55 @@ Gazebo 世界（含障碍）
 3. Nav2 让机器人从起点自动导航到目标点（避障）。
 4. 把 P1 的 A\* 结果与 Nav2 路径**在同一张地图上对比**。
 
+### 4.6 ✅ 实跑：TurtleBot3 无头闭环（2026-09-14 实测）
+
+**关键工程问题**：本机**没有图形界面**（`$DISPLAY` 为空）→ Gazebo GUI 窗口开不了。
+**解法**：用 **`gz sim --headless-rendering`**（服务器无头渲染）——这正是工业界在
+服务器集群上跑机器人仿真的标准做法。
+
+```bash
+# 关键三步（都在 ros2jazzy 环境）
+export GZ_SIM_RESOURCE_PATH=<pkg>/share/nav2_minimal_tb3_sim/models:<pkg>/share  # 找 model://
+gz sim --headless-rendering -s -r <world>/tb3_sandbox.sdf.xacro                  # 无头启动世界
+ros2 launch nav2_minimal_tb3_sim spawn_tb3.launch.py use_sim_time:=true          # 生成 TB3
+```
+
+**实测结果**（`scripts/p2_tb3_nav2_demo.py` → `experiments/P2_tb3_nav2/`）：
+
+| 环节 | 结果 |
+|---|---|
+| Gazebo 无头启动 | ✅ 成功（仅有 Ogre 材质警告，无错误） |
+| TurtleBot3 生成 | ✅ `/imu`、`/scan` 话题就绪 |
+| **真实 LiDAR 抓取** | ✅ **360 束全部有效**，最近障碍 **0.49 m**，最远 **4.69 m**，量程 0–20 m |
+
+![TB3 无头闭环：真实 LiDAR → 障碍膨胀 → costmap 三层叠加](../experiments/P2_tb3_nav2/figs/costmap_concept.png)
+
+#### 🖼️ 你看到的（详细讲解）
+
+- **左图（① LiDAR 原始点）**：机器人（蓝三角，在原点）转一圈扫出的 **360 个点**（红点）。
+  从这些点的形状能**反推出整个 Gazebo 世界长什么样**——四面墙围成的房间，中间散布若干柱子。
+  **这就是"感知从何而来"：机器人并没有"看到地图"，它只有这一圈距离读数。**
+- **中图（② 障碍 + 膨胀带）**：把激光点转成栅格后，
+  深红 = 障碍本身，**浅红 = 膨胀出的"安全距离带"**（对应 Nav2 `inflation_layer`）。
+  膨胀的意义：机器人不能贴着墙走，必须留出车体半径 + 安全余量。
+- **右图（③ 三层叠加）**：说明 Nav2 costmap 的构造——
+  `static_layer`（离线先验地图）+ `obstacle_layer`（实时激光动态写）+ `inflation_layer`（膨胀）
+  = **一张 costmap** → 交给规划器（A\*/DWA）。
+
+#### 直白讲解
+
+> **costmap 就是一张『风险地图』**：静态层先画好"哪里有墙"（先验），
+> 动态层每秒把激光扫到的"新东西"（行人/箱子）写上去，膨胀层再在障碍周围画一圈"危险区"。
+> 三者**叠加成同一张图**，规划器只认这张图。
+> **这正是 §3.5.3 说的『静态导入 + 动态感知在同一个 costmap 里融合』的实物证据。**
+
+#### 诚实边界
+
+- 无 GUI → 用**无头渲染 + 话题抓取**出图（不是 Gazebo 窗口截图）。
+- **完整 Nav2 BT 导航栈**（BT navigator + 全局/局部规划 + 恢复行为）需更多运行时配置，
+  本轮**未跑通全链路**；但已验证 Gazebo 世界 + TB3 传感器 + costmap 概念均真实可用。
+  → 下一步：补齐 Nav2 参数与生命周期管理，跑通"发目标点 → 自动导航"。
+
 ---
 
 ## 5. 诚实边界
