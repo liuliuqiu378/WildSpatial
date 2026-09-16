@@ -196,9 +196,16 @@
         </visual>
       </link>
     </model>
-    <!-- ===== 动态行人（VelocityControl 驱动，无摩擦滑行）===== -->
+    <!-- ===== 动态行人（VelocityControl 驱动，无摩擦滑行）=====
+         布置原则（**几何可避性**，被实测逼出来的修正）：
+           旧版两行人沿 x≈0 / x≈1.2 纵穿 y∈±3.0，**直接切过机器人巡逻环线**
+           → 产生 4 个"必经冲突点"，无论避障算法多好都无法避免贴脸（实测 dmin 0.29~0.38m）。
+           新版把行人**放到环线外侧**（|x|=2.6 > 环线半径 1.5m），
+           并让它们**横向穿行**（沿 Y 往复，但站位在环线外）
+           → 机器人有充足空间"绕到行人身后"，冲突**可控可避**。
+         说明：这是**场景设计的正确顺序** —— 先保证几何可避，再优化避障算法。 -->
     <model name="pedestrian">
-      <pose>0.0 -2.2 0.45 0 0 0</pose>
+      <pose>2.6 -2.5 0.45 0 0 0</pose>
       <link name="body">
         <inertial>
           <mass>60</mass>
@@ -244,11 +251,11 @@
       </link>
       <plugin filename="gz-sim-velocity-control-system" name="gz::sim::systems::VelocityControl">
         <link_name>body</link_name>
-        <initial_linear>0 0.5 0</initial_linear>
+        <initial_linear>0 0.35 0</initial_linear>
       </plugin>
     </model>
     <model name="pedestrian2">
-      <pose>1.2 2.2 0.45 0 0 0</pose>
+      <pose>-2.6 2.5 0.45 0 0 0</pose>
       <link name="body">
         <inertial>
           <mass>60</mass>
@@ -288,7 +295,7 @@
       </link>
       <plugin filename="gz-sim-velocity-control-system" name="gz::sim::systems::VelocityControl">
         <link_name>body</link_name>
-        <initial_linear>0 -0.5 0</initial_linear>
+        <initial_linear>0 -0.35 0</initial_linear>
       </plugin>
     </model>
   </world>

@@ -12,7 +12,7 @@
 |---|---|---|---|
 | **入门 / 总纲**（`00_` 开头） | `00_PRIMER` / `00_QUICKSTART` / `00_LANDSCAPE` / `00_ROADMAP` | 大白话、零公式 | 所有人，尤其零基础 |
 | **数据台账** | `DATASETS` | **详解 + 真实样例图** | 想了解"每个数据集是什么、能做什么任务" |
-| **基础篇**（`F0`–`F5`） | 见下表 | 初学者友好、一般场景 | **已懂 ML/DL 的转行者的主入口**；零基础补地基 |
+| **基础篇**（`F0`–`F8`） | 见下表 | 初学者友好、一般场景 | **已懂 ML/DL 的转行者的主入口**；零基础补地基 |
 | **模块文档**（`M0`–`M9`） | 见下表 | 分两派 ↓ | — |
 
 模块文档有**两种写法并存**（项目强制「四段式」+ 初学者友好双轨）：
@@ -39,6 +39,9 @@
 | `F3 正常流程` | ✅标准流水线 | ✅拼图类比 | ✅引 M1/M2 图 | ✅全栈目录 | ✅已补 |
 | `F4 ML/DL 桥接` | ✅映射表 | ✅心智模型 | ✅引 M4/M7 图 | ✅ | ✅竞争力 |
 | `F5 视觉+雷达融合` | ✅标定/投影/3 架构 | ✅鉴定师×卷尺类比 | ✅可跑投影 demo 图 | ✅量产范式 | ✅自动驾驶/AMR/水下 |
+| `F6 决策与控制` | ✅WorldModel/costmap/规划/控制/兜底 | ✅轮椅坦克×PID 类比 | ✅引 P1/P2 图 | ✅感知控制后半段 | ✅Nav2/AMR/兜底 |
+| `F7 硬件扫盲` | ✅器官清单/选型口诀/数据形态 | ✅五官×大脑×手脚×神经类比 | ✅引 P2/KITTI 图 | ✅硬件→算法衔接 | ✅园区机器人选型清单 |
+| `F8 全栈贯通` | ✅同一任务串全栈/9 时刻/真实图 | ✅一镜到底×器官地图类比 | ✅引 P2/KITTI/M1/M7 等真实图 | ✅碎片→一条线 | ✅园区夜间配送全链路 |
 | `M0 几何地基` | ✅✅公式 | ✅6 图 | ✅ | ✅ | ⬜（基础，通用） |
 | `M1 SfM/VO` | ✅✅ | ✅10+ 图 | ✅ | ✅ | ⬜（基础，通用） |
 | `M2 深度与重建` | ✅ | ✅三级跳类比 | ✅recon.png | ✅ | ✅已补 |
@@ -52,6 +55,8 @@
 | `P0 实战项目` | ✅ | ✅多场景数据集×M-module | ✅overview 图 | ✅ | ✅已补（4 项目跑通，逻辑自洽可复现） |
 | `P1 工程叙事` | ✅ | ✅四场景 + 初学者常漏环节 | ✅map_plan/control_cmd | ✅ | ✅已补（感知→规划→控制 闭环实跑） |
 | `P2 闭环仿真` | ✅ | ✅表示谱系 + 成熟度谱系 | ✅navfn_vs_p1 图 | ✅ | ✅已补（ROS2+Nav2 已装并跑通） |
+| `P3 面试旗舰项目` | ✅ | ✅恶劣环境鲁棒感知+融合兜底+闭环 | ✅robustness/map/control/avoid 4 图 | ✅ | ✅已补（VGGT 托底实跑，可讲解完整项目） |
+| `P4 真实驾驶动态建图` | ✅ | ✅真实RGB+真实LiDAR→VGGT定位→定标→BEV 增量建图 | ✅dualview GIF/米制终图 | ✅ | ✅已补（KITTI 真实数据零下载实跑，双视角回放） |
 
 ---
 
@@ -67,10 +72,12 @@
 
 ### 路径 B · 已懂 ML / DL / 一般 CS（本文档系列的主目标读者）
 ```
-F4（你的知识地图，先建立信心）→ F0 → F1 → F2 → F3（4 篇补"一般场景+基础知识"地基）→ F5（视觉+雷达融合）
+F4（你的知识地图，先建立信心）→ F0 → F1 → F2 → F3（4 篇补"一般场景+基础知识"地基）→ F5（视觉+雷达融合）→ F7（硬件扫盲：摄像头/激光雷达/雷达/电机/选型，建议与 F0/F5 同读）
+   → F6（决策与控制：WorldModel→costmap→规划→控制→兜底，补齐"感知控制"后半段）
    → M4（前馈模型，你最熟悉的"网络出几何"）→ M2（重建）→ M7（语义）→ M8（端侧）
    → M0 → M1 → M3（专家笔记，按需补严谨）
    →（恶劣场景）M5（压力测试）→ M6（多模态融合）→ M9（综合闭环）
+   → P1（实战：感知→规划→控制 闭环）/ P2（闭环仿真：Nav2 + FPV 真实相机）
 ```
 
 ### 路径 C · 做项目 / 写简历 / 端侧落地
@@ -79,6 +86,20 @@ F4（你的知识地图，先建立信心）→ F0 → F1 → F2 → F3（4 篇�
    → F3（正常流程打底）→ F5（视觉+激光雷达融合，量产主流范式）→ M5（失效图谱=选型依据）
    → M4（前馈模型）→ M7（语义+责任切分）
    → M8（端侧部署，初学者版已写，三维表已用本机缩预算实测）→ M9（综合闭环，已写）→ P0（实战项目整合层，已写）
+   → **P3（面试旗舰：恶劣环境鲁棒感知+融合兜底+闭环，所有模块收敛点）**
+   → P4（真实数据动态建图：真实 RGB+LiDAR → VGGT 定位 → 定标 → BEV 双视角回放）
+```
+
+### 路径 D · 成为「感知控制专业人士」（感知 + 控制 + 落地，本教程终极目标）
+```
+00_PRIMER（概念地基）
+   → F0–F8（基础篇全栈：投影→表示→深度→流程→ML桥接→融合→【硬件扫盲】→【决策与控制】→【全栈贯通】）
+   → M0–M3（几何与失效地基）→ M4–M7（前馈/压力测试/融合/语义）→ M8（端侧）→ M9（综合闭环）
+   → P1（感知→规划→控制 真实闭环）/ P2（仿真实验台 + 真实相机 FPV + Nav2）
+   → **P3（面试旗舰：把上述全部收口成一个可讲解的完整项目：恶劣环境鲁棒感知+融合兜底+闭环）**
+   → P4（真实传感器数据闭环：真实 RGB+LiDAR 输入 → 场景构建 → 双视角回放全程）
+   → 回头吃透 P2_simulation.md §3.7（感知-决策解耦 + WorldModel 接口 + 兜底分层）
+      ——这是"能交付机器人的专业人士"与"只会跑 demo"的分水岭
 ```
 
 ---
@@ -89,7 +110,7 @@ F4（你的知识地图，先建立信心）→ F0 → F1 → F2 → F3（4 篇�
 |---|---|---|
 | 针孔投影 / 对极线 / 纯旋转退化等 6 图 | `experiments/M0_geometry_foundation/figs/` | M0, QUICKSTART, PRIMER, **F0** |
 | 相机投影/表示对比/深度视差/三角化 4 图 | `experiments/foundations/figs/` | **F0, F1, F2, F3**（程序生成概念演示） |
-| 轨迹 / 诊断 / ATE 漂移 + BA 对比 | `experiments/M1_vo_fr1_desk/figs/` | M1, QUICKSTART, **F3** |
+| 轨迹 / 诊断 / ATE 漂移 + BA 对比 | `experiments/M1_vo_fr1_desk/figs/` | M1, QUICKSTART, **F3**, F8 |
 | 特征/匹配/对极/重建/条件对比 5 图 | `experiments/M1_showcase/figs/` | M1 §6, **F3** |
 | TSDF 重建网格 | `experiments/M2_recon/figs/recon.png` | M2, **F1/F3** |
 | 失效图谱 / 样本图 / 状态分布 | `experiments/M3_degradation_sweep/figs/` | M3 |
@@ -102,16 +123,16 @@ F4（你的知识地图，先建立信心）→ F0 → F1 → F2 → F3（4 篇�
 | 场景图解构（3D 物体散点） | `experiments/M9_closed_loop/figs/scene_graph.png` | **M9** |
 | 场景图语义增强（带真实 class 标签） | `experiments/M9_closed_loop/figs/scene_graph_semantic.png` | **M9, M7** |
 | 实战项目总览（轨迹/场景图/端侧预算） | `experiments/projects/*/figs/overview.png` | **P0** |
-| P1 占据栅格 + A* 规划（感知→规划） | `experiments/P1_service_robot/figs/map_plan.png` | **P1** |
-| P1 动态避障（速度障碍法 VO 减速） | `experiments/P1_service_robot/figs/dynamic_avoid.png` | **P1** |
-| P1 差速轮控制指令序列（规划→控制） | `experiments/P1_service_robot/figs/control_cmd.png` | **P1** |
+| P1 占据栅格 + A* 规划（感知→规划） | `experiments/P1_service_robot/figs/map_plan.png` | **P1, F6** |
+| P1 动态避障（速度障碍法 VO 减速） | `experiments/P1_service_robot/figs/dynamic_avoid.png` | **P1, F6, F8** |
+| P1 差速轮控制指令序列（规划→控制） | `experiments/P1_service_robot/figs/control_cmd.png` | **P1, F6, F8** |
 | P1 3D 场景图（语义版） | `experiments/P1_service_robot/figs/scene_graph.png` | **P1** |
 | 公开数据集 / 输入样例拼图 | `experiments/projects/figs/dataset_samples.png` | **P0** |
 | 视觉+深度/LiDAR 融合几何示意 | `experiments/projects/figs/vision_lidar_fusion.png` | **P0, F5** |
-| 点云↔图像投影闭环（按距离着色） | `experiments/M10_lidar_fusion/figs/lidar_projection.png` | **F5** |
+| 点云↔图像投影闭环（按距离着色） | `experiments/M10_lidar_fusion/figs/lidar_projection.png` | **F5, F8** |
 | **KITTI 真实 LiDAR + 相机融合**（真实传感器） | `experiments/M10_kitti_lidar/figs/kitti_lidar_fusion.png` | **F5** |
 | D1 · 真实水下开放词汇检测（GT 对比） | `experiments/D1_real_world/figs/underwater_det.png` | **DATASETS, M7** |
-| D1 · 真实夜间城市驾驶检测 | `experiments/D1_real_world/figs/night_det.png` | **DATASETS, M7** |
+| D1 · 真实夜间城市驾驶检测 | `experiments/D1_real_world/figs/night_det.png` | **DATASETS, M7, F7, F8** |
 | DETR 封闭集 / GrabCut 分割 | `experiments/landscape_showcase/figs/` | LANDSCAPE |
 | **数据集真实样例图集**（夜/室内深度/停车场/点云/驾驶） | `experiments/datasets_showcase/figs/` | **DATASETS** |
 | SUN RGB-D 深度真值反投影 | `experiments/SUNRGBD_depth/figs/sunrgbd_scene.png` | **DATASETS** |
@@ -119,20 +140,32 @@ F4（你的知识地图，先建立信心）→ F0 → F1 → F2 → F3（4 篇�
 | **NDISPark 昼夜实例分割真值** | `experiments/ndispark_night_day/figs/ndispark_seg.png` | **DATASETS, M6, M7** |
 | 点云退化图库 + Chamfer 曲线 | `experiments/ModelNet40C_corruption/figs/` | **DATASETS** |
 | **P1 四场景真实数据样例**（扫地/行人/无人船） | `experiments/p1_datasets_showcase/figs/p1_scene_samples.png` | **DATASETS, P1** |
-| **P2 工业级 Nav2 规划器 vs P1 手搓 A\*** | `experiments/P2_ros2/figs/navfn_vs_p1.png` | **P2** |
-| **P2 TB3 无头闭环：LiDAR→膨胀→costmap** | `experiments/P2_tb3_nav2/figs/costmap_concept.png` | **P2** |
-| **P2 感知实验台：仿真相机→真值深度** | `experiments/P2_gz_perception/figs/gazebo_rgbd.png` | **P2, M4** |
+| **P2 工业级 Nav2 规划器 vs P1 手搓 A\*** | `experiments/P2_ros2/figs/navfn_vs_p1.png` | **P2, F6, F8** |
+| **P2 TB3 无头闭环：LiDAR→膨胀→costmap** | `experiments/P2_tb3_nav2/figs/costmap_concept.png` | **P2, F6, F7** |
+| **P2 感知实验台：仿真相机→真值深度** | `experiments/P2_gz_perception/figs/gazebo_rgbd.png` | **P2, M4, F7, F8** |
 | **P2 仿真 RGB-D 多帧采集（边走边采）** | `experiments/P2_gz_sense_degrade/figs/gz_rgbd_frames.png` | **P2** |
-| **P2 可控退化图库（低光/雾/噪声）** | `experiments/P2_gz_sense_degrade/figs/degradation_gallery.png` | **P2, M5** |
+| **P2 可控退化图库（低光/雾/噪声）** | `experiments/P2_gz_sense_degrade/figs/degradation_gallery.png` | **P2, M5, F8** |
 | **P2 VGGT 重建 vs 仿真真值深度** | `experiments/P2_gz_vggt/figs/vggt_vs_gt_depth.png` | **P2, M4** |
-| **P2 物理级退化（光照/雾 4 条件）** | `experiments/P2_gz_physical/figs/physical_conditions.png` | **P2, M5** |
+| **P2 物理级退化（光照/雾 4 条件）** | `experiments/P2_gz_physical/figs/physical_conditions.png` | **P2, M5, F8** |
 | **P2 物理级 vs 事后P图 对比** | `experiments/P2_gz_physical/figs/physical_vs_synthetic.png` | **P2, M5** |
 | **P2 仿真真值轨迹（ATE 免费参考）** | `experiments/P2_gz_physical/figs/gt_trajectory.png` | **P2, M1** |
 | **P2 移动操作：A\*(2D) vs OMPL(高维关节空间)** | `experiments/P2_mobile_manipulation/figs/planner_compare.png` | **P2** |
 | **P2 RRT/PRM 撒点连线可视化** | `experiments/P2_mobile_manipulation/figs/rrt_prm.png` | **P2** |
 | **P2 多传感器同步（相机+LiDAR+IMU）** | `experiments/P2_gz_multisensor/figs/sensor_fusion.png` | **P2, M6, F5** |
-| **P2 动态障碍五层闭环（感知→决策→控制）** | `experiments/P2_dynamic_obstacle/figs/pipeline.png` | **P2, P1** |
-| **P2 动态障碍：行人距离 vs 避障指令** | `experiments/P2_dynamic_obstacle/figs/ped_tracking.png` | **P2, P1** |
+| **P2 动态障碍五层闭环（感知→决策→控制）** | `experiments/P2_dynamic_obstacle/figs/pipeline.png` | **P2, P1, F8** |
+| **P2 动态障碍：行人距离 vs 避障指令** | `experiments/P2_dynamic_obstacle/figs/ped_tracking.png` | **P2, P1, F6, F7, F8** |
+| **P2 动态障碍闭环俯视动图** | `experiments/P2_dynamic_obstacle/figs/closed_loop.gif` | **P2, P1, F8** |
+| **P2 第一视角送货关键帧（合成版）** | `experiments/P2_delivery_fpv/figs/keyframes.png` | **P2** |
+| **P2 第一视角送货动图（合成版）** | `experiments/P2_delivery_fpv/figs/delivery_fpv.gif` | **P2** |
+| **P2 第一视角送货关键帧（Gazebo 真实相机）** | `experiments/P2_delivery_fpv_gazebo/figs/keyframes.png` | **P2, F8** |
+| **P2 第一视角送货动图（Gazebo 真实相机）** | `experiments/P2_delivery_fpv_gazebo/figs/delivery_fpv_gazebo.gif` | **P2** |
+| **P3 鲁棒性对比：方法 × 退化（传统法塌缩 vs VGGT 稳）** | `experiments/P3_flagship_delivery/figs/robustness_contrast.png` | **P3** |
+| **P3 托底轨迹建图 + A\* 规划** | `experiments/P3_flagship_delivery/figs/map_plan.png` | **P3, F6, F8** |
+| **P3 差速轮控制指令** | `experiments/P3_flagship_delivery/figs/control_cmd.png` | **P3, F6** |
+| **P3 动态障碍速度障碍法避让** | `experiments/P3_flagship_delivery/figs/dynamic_avoid.png` | **P3, F6** |
+| **4Seasons 真实夜间：VGGT 轨迹紧贴 GNSS 真值** | `experiments/M5_4seasons_oldtown_night/figs/traj_vggt.png` | **P3, M5, D1** |
+| **P4 真实驾驶双视角回放（真实 RGB+LiDAR → BEV 建图随车生长）** | `experiments/P4_real_driving/figs/driving_dualview.gif` | **P4, F5, F8** |
+| **P4 真实驾驶 BEV 终图（125m 轨迹，米制坐标）** | `experiments/P4_real_driving/figs/bev_final_map.png` | **P4, F5** |
 
 ### 📷 一屏看懂本项目做了什么（精选图墙，按主线顺序）
 
@@ -176,7 +209,7 @@ F4（你的知识地图，先建立信心）→ F0 → F1 → F2 → F3（4 篇�
 
 ## 五、覆盖状态确认（诚实标注，不假装系统已完整）
 
-截至 2026-09-14，**M0–M9 + F0–F5 + P0 教学文档已全部就位**，无结构性缺口；且**真实数据闭环已跑通**（D1 真实语义评测、F5 真实 LiDAR、D3 数据台账）。下表为差异化路线的收口模块状态：
+截至 2026-09-14，M0–M9 + F0–F5 教学文档已全部就位，无结构性缺口；2026-09-15 新增 `F6` 决策与控制基础（补齐"感知控制"后半段，与 §3.7 呼应）+ `F7` 硬件扫盲（摄像头/激光雷达/毫米波雷达/深度相机/IMU/编码器/电机驱动/计算平台/同步标定 选型清单）+ `F8` 全栈贯通（用「园区夜间配送」一趟任务把 硬件→感知→WorldModel→规划→控制→兜底 串成一条线，每步配真实图，把碎片拼成可 replay 的全栈），使本教程从"纯感知算法"升级为"硬件→感知→控制 全栈"，且所有篇章都能在同一个真实场景里被"看见"。且**真实数据闭环已跑通**（D1 真实语义评测、F5 真实 LiDAR、D3 数据台账）。下表为差异化路线的收口模块状态：
 
 | 模块 | 状态 | 必含的 7 维度 | 现有素材 |
 |---|---|---|---|

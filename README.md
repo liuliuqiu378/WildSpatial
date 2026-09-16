@@ -26,7 +26,7 @@
 
 | 你的要求 | 这份教程的做法 |
 |---|---|
-| **通俗易懂** | 双轨写作：**基础篇 `F0–F5`（零公式门槛、生活类比）** + **专家笔记（含公式）**；每个概念先给类比，再补严谨。零基础从 `00_PRIMER` 起，绝不先撞李群。 |
+| **通俗易懂** | 双轨写作：**基础篇 `F0–F8`（零公式门槛、生活类比）** + **专家笔记（含公式）**；每个概念先给类比，再补严谨。零基础从 `00_PRIMER` 起，绝不先撞李群。 |
 | **系统完整** | 从「相机投影」到「端侧部署」全链路打通；`F` 基础篇补地基，`M0–M9` 模块深挖，三条阅读路径覆盖零基础 / 转行者 / 做项目。 |
 | **结合实战** | 每个知识点都**跑真实数据或代码**，图都是程序生成或真实实验产出（见第六章）；`scripts/` 里每条命令都能复现。 |
 | **丰富工具算法 + 对比展示** | **第六章「工具与算法全景对比」** 用大量表格横向对比深度/位姿/表示/语义/部署各类方法与代表工具，并标注"本项目怎么用"。 |
@@ -60,7 +60,7 @@
 ### 路径 B · 已懂 ML / DL / CV（★ 本教程主目标读者）
 ```
 F4（你的知识地图，先建立信心）
-   → F0 → F1 → F2 → F3（4 篇补「一般场景 + 基础知识」）
+   → F0 → F1 → F2 → F3（4 篇补「一般场景 + 基础知识」）→ F5（视觉+雷达融合）→ F7（硬件扫盲）→ F6（决策与控制）→ F8（全栈贯通：一趟真实任务串起全栈）
    → M4（前馈模型，你最熟的"网络出几何"）
    → M2（重建）→ M7（语义）→ M8（端侧）
    → M0 → M1 → M3（专家笔记，按需补严谨）
@@ -93,6 +93,9 @@ F4（你的知识地图，先建立信心）
 | [`docs/F3_normal_pipeline.md`](docs/F3_normal_pipeline.md) | 基础 | 正常场景端到端流程（视频→3D 模型） |
 | [`docs/F4_ml_to_3d_bridge.md`](docs/F4_ml_to_3d_bridge.md) | 基础 | **ML/DL 的人如何接入 3D 视觉**（转行者主入口） |
 | [`docs/F5_vision_lidar_fusion.md`](docs/F5_vision_lidar_fusion.md) | 基础 | **视觉 + 激光雷达（点云）融合**：量产感知主流范式（标定/投影/前中后融合/3D 检测 + 可跑 demo） |
+| [`docs/F6_decision_control.md`](docs/F6_decision_control.md) | 基础 | **决策与控制**：感知→动作的后半段（WorldModel 接口→代价地图→规划→控制→兜底分层），补齐"感知控制"全栈 |
+| [`docs/F7_hardware_primer.md`](docs/F7_hardware_primer.md) | 基础 | **硬件扫盲**：感知系统"器官"清单（摄像头/激光雷达/毫米波雷达/深度相机/IMU/编码器/电机驱动/计算平台/同步标定 选型口诀 + 数据形态 + 园区机器人选型清单） |
+| [`docs/F8_real_scenario_walkthrough.md`](docs/F8_real_scenario_walkthrough.md) | 基础 | **全栈贯通**：用「园区夜间配送」一趟真实任务串起 硬件→感知→WorldModel→规划→控制→兜底，每步配真实图，把碎片拼成可 replay 的全栈（与 `F7 §13` 两面互补） |
 | [`docs/M2_depth_reconstruction.md`](docs/M2_depth_reconstruction.md) | 入门 | 深度→点云→网格（初学者版） |
 | [`docs/M4_foundation_models.md`](docs/M4_foundation_models.md) | 入门 | 前馈 3D 基础模型（初学者版） |
 | [`docs/M5_stress_test.md`](docs/M5_stress_test.md) | 入门 | 压力测试矩阵（初学者版，核心资产） |
@@ -105,10 +108,12 @@ F4（你的知识地图，先建立信心）
 | [`docs/M3_failure_attribution.md`](docs/M3_failure_attribution.md) | 专家 | 失效归因：什么条件崩、崩在哪一步 |
 | [`docs/P0_projects.md`](docs/P0_projects.md) | 实战 | **实战项目整合层**：多场景公开数据集 × M-module 串成可落地工程 |
 | [`docs/P1_field_projects.md`](docs/P1_field_projects.md) | 实战 | **工程叙事层**：四个真实场景（扫地/送物/自动驾驶/无人船）的完整工程叙事 + 三视角讲解 + 初学者常漏环节 |
-| [`docs/P2_simulation.md`](docs/P2_simulation.md) | 实战 | **闭环仿真平台**：CARLA/Gazebo/Habitat 选型对比 + Gazebo+ROS2（免 sudo）接入方案（对照工业级 Nav2） |
+| [`docs/P2_simulation.md`](docs/P2_simulation.md) | 实战 | **闭环仿真平台**：CARLA/Gazebo/Habitat 选型对比 + Gazebo+ROS2（免 sudo）接入方案（对照工业级 Nav2）+ 机器人第一视角 3D 送货演示（合成版 + Gazebo 真实相机版） |
+| [`docs/P3_field_project.md`](docs/P3_field_project.md) | 实战 | **面试旗舰项目**：恶劣环境鲁棒感知（VGGT vs 传统 VO）+ 诊断驱动融合兜底 + 感知→规划→控制闭环；所有模块（F/M/P0–P2）的收敛点，可讲解的完整落地项目 |
+| [`docs/P4_real_driving.md`](docs/P4_real_driving.md) | 实战 | **真实驾驶动态建图**：真实 RGB + 真实 LiDAR（KITTI，零下载）当实时输入流 → VGGT 视觉定位 + LiDAR 定标 → 逐帧 BEV 增量建图 → 第一视角+俯视全景双视角视频回放全程 |
 
 > 📌 文档图用相对路径引用 `experiments/<module>/figs/`，已随代码提交，**在 GitHub 上直接显示**。
-> ✅ **基础篇 `F0–F4` + 模块 `M0–M9` 教学文档已全部覆盖**；`M8` 端侧为初学者版（三维表已用本机缩算力预算模拟实测，无需真机），`M6/M9` 为初学者版（融合救援与场景图 demo 已实测跑通）。`P0/P1` 实战项目层已建：P0 是多场景抽象管线，P1 是面向面试官/客户的工程叙事 + 园区服务机器人感知→规划→控制闭环实跑。
+> ✅ **基础篇 `F0–F8` + 模块 `M0–M9` 教学文档已全部覆盖**；`M8` 端侧为初学者版（三维表已用本机缩算力预算模拟实测，无需真机），`M6/M9` 为初学者版（融合救援与场景图 demo 已实测跑通）。`P0/P1` 实战项目层已建：P0 是多场景抽象管线，P1 是面向面试官/客户的工程叙事 + 园区服务机器人感知→规划→控制闭环实跑；`F6` 决策与控制补齐"感知控制"后半段（WorldModel→costmap→规划→控制→兜底），`F7` 硬件扫盲补齐"算法人必懂的硬件器官"（摄像头/激光雷达/雷达/电机/选型/同步标定），`F8` 全栈贯通用「园区夜间配送」一趟任务把硬件→感知→控制串成一条线（每步真实图），与 `P2_simulation.md §3.7` 架构认知呼应——本教程已从"纯感知算法"升级为"硬件→感知→控制 全栈"，且所有篇章都能在同一个真实场景里被"看见"。
 
 ### 🖼️ 成果一览（本项目真实实验产出，点进文档看细节）
 
@@ -216,7 +221,7 @@ WildSpatial/
 ├── docs/                # 教学文档（四段式：目的+原理+讲解+真实验证·图）
 │   ├── 00_INDEX.md / 00_PRIMER.md / 00_QUICKSTART.md / 00_LANDSCAPE.md / 00_ROADMAP.md
 │   ├── DATASETS.md                                      # 多模态数据集总台账
-│   ├── F0_camera_projection.md … F5_vision_lidar_fusion.md   # 基础篇（一般场景+基础知识，含视觉+雷达融合）
+│   ├── F0_camera_projection.md … F8_real_scenario_walkthrough.md   # 基础篇（一般场景+基础知识+硬件扫盲+决策控制+全栈贯通，含视觉+雷达融合）
 │   ├── M0_geometry_foundation.md / M1_sfm_from_scratch.md / M3_failure_attribution.md  # 专家笔记
 │   └── M2/M4/M5/M7/M8/M6/M9_*.md                                    # 初学者版（M6 多模态 / M9 闭环）
 ├── src/wildspatial/     # 核心代码库（geometry / sfm / eval / viz，手搓）
@@ -256,6 +261,8 @@ WildSpatial/
 | M6 多模态融合 | ✅ 初学者版 | 低光救援区 96%；VGGT 救援引用 M5(ATE 0.016–0.049) |
 | M9 综合闭环 | ✅ 初学者版 | VO 9.8 fps(纯 CPU)；解构 16 个 3D 物体候选 |
 | **P0 实战项目整合层** | ✅ 已建 | 4 项目跑通：TUM/4Seasons/合成退化/合成序列 × M2→M4→M7→M9→M8 |
+| **P3 面试旗舰项目** | ✅ 已建 | 恶劣环境鲁棒感知+融合兜底+闭环：自研VO 弱光塌缩 vs VGGT 0.02–0.03m；托底轨迹驱动 A\* 30 步/控制 29 条/避障 5 步 |
+| **P4 真实驾驶动态建图** | ✅ 已建 | 真实 RGB+真实 LiDAR（KITTI 30 帧连续）：VGGT 定位 125.16m 轨迹（LiDAR 定标 ×72.4）+ 56.5 万真实点累积 BEV + 双视角视频 |
 
 > 完整路线图与每步踩坑记录在 [`PROGRESS.md`](PROGRESS.md)。
 

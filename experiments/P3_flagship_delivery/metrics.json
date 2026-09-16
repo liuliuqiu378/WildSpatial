@@ -1,0 +1,154 @@
+{
+  "project": "harsh_env_robust_delivery",
+  "title": "恶劣环境视觉空间感知与自主配送机器人（面试旗舰）",
+  "dataset": "TUM RGB-D fr1/desk（带真值+深度）；退化=合成施加",
+  "n_frames": 100,
+  "available_methods": [
+    "handcrafted_vo",
+    "colmap_sfm",
+    "vggt",
+    "lightglue_vo"
+  ],
+  "robustness": {
+    "handcrafted_vo": {
+      "clean": {
+        "ate_rmse_m": 0.3585669536669506,
+        "est_path_len_m": 4.181,
+        "gt_path_len_m": 3.208,
+        "degenerate": false,
+        "ok": true,
+        "note": "自研 SIFT+VO（M1）：比值检验 + RANSAC + 三角化 + PnP + 运动护栏"
+      },
+      "low_light": {
+        "ate_rmse_m": 0.7014658556808022,
+        "est_path_len_m": 0.0,
+        "gt_path_len_m": 3.208,
+        "degenerate": true,
+        "ok": true,
+        "note": "自研 SIFT+VO（M1）：比值检验 + RANSAC + 三角化 + PnP + 运动护栏"
+      },
+      "motion_blur": {
+        "ate_rmse_m": 0.7014658556808022,
+        "est_path_len_m": 0.0,
+        "gt_path_len_m": 3.208,
+        "degenerate": true,
+        "ok": true,
+        "note": "自研 SIFT+VO（M1）：比值检验 + RANSAC + 三角化 + PnP + 运动护栏"
+      }
+    },
+    "colmap_sfm": {
+      "clean": {
+        "ate_rmse_m": 0.02771449331802203,
+        "est_path_len_m": 226.706,
+        "gt_path_len_m": 40.565,
+        "degenerate": false,
+        "ok": true,
+        "note": "COLMAP 增量式 SfM（工业级传统几何）"
+      },
+      "low_light": {
+        "ate_rmse_m": 0.06666243755342696,
+        "est_path_len_m": 207.646,
+        "gt_path_len_m": 38.275,
+        "degenerate": false,
+        "ok": true,
+        "note": "COLMAP 增量式 SfM（工业级传统几何）"
+      },
+      "motion_blur": {
+        "ate_rmse_m": 0.026095528391766255,
+        "est_path_len_m": 202.248,
+        "gt_path_len_m": 31.145,
+        "degenerate": false,
+        "ok": true,
+        "note": "COLMAP 增量式 SfM（工业级传统几何）"
+      }
+    },
+    "vggt": {
+      "clean": {
+        "ate_rmse_m": 0.021508126082097685,
+        "est_path_len_m": 2.372,
+        "gt_path_len_m": 3.208,
+        "degenerate": false,
+        "ok": true,
+        "note": "VGGT 前馈 3D 基础模型（一次前向出相机轨迹 + 深度/点云）"
+      },
+      "low_light": {
+        "ate_rmse_m": 0.01982963399791739,
+        "est_path_len_m": 2.33,
+        "gt_path_len_m": 3.208,
+        "degenerate": false,
+        "ok": true,
+        "note": "VGGT 前馈 3D 基础模型（一次前向出相机轨迹 + 深度/点云）"
+      },
+      "motion_blur": {
+        "ate_rmse_m": 0.03037892196212805,
+        "est_path_len_m": 2.73,
+        "gt_path_len_m": 3.208,
+        "degenerate": false,
+        "ok": true,
+        "note": "VGGT 前馈 3D 基础模型（一次前向出相机轨迹 + 深度/点云）"
+      }
+    },
+    "lightglue_vo": {
+      "clean": {
+        "ate_rmse_m": 0.4936070885575201,
+        "est_path_len_m": 5.327,
+        "gt_path_len_m": 3.208,
+        "degenerate": false,
+        "ok": true,
+        "note": "SuperPoint+LightGlue 学习式前端 + M1 几何后端（单目 VO）"
+      },
+      "low_light": {
+        "ate_rmse_m": 0.2969215840553811,
+        "est_path_len_m": 5.334,
+        "gt_path_len_m": 3.208,
+        "degenerate": false,
+        "ok": true,
+        "note": "SuperPoint+LightGlue 学习式前端 + M1 几何后端（单目 VO）"
+      },
+      "motion_blur": {
+        "ate_rmse_m": 0.42103274325709894,
+        "est_path_len_m": 4.169,
+        "gt_path_len_m": 3.208,
+        "degenerate": false,
+        "ok": true,
+        "note": "SuperPoint+LightGlue 学习式前端 + M1 几何后端（单目 VO）"
+      }
+    }
+  },
+  "fusion_fallback": {
+    "harsh_condition": "motion_blur",
+    "primary_degenerate": true,
+    "chosen_method": "vggt",
+    "reason": "主方法 handcrafted_vo 在『motion_blur』退化（ATE 失效/轨迹塌缩）→ 触发融合兜底，切换到 vggt（ATE=0.03037892196212805m，轨迹可用）"
+  },
+  "closed_loop": {
+    "fallback_method": "vggt",
+    "scale_factor": 1.1719,
+    "occupancy": {
+      "shape": [
+        28,
+        38
+      ],
+      "res_m": 0.1,
+      "occupied_cells": 172,
+      "free_cells": 107
+    },
+    "plan": {
+      "path_steps": 30
+    },
+    "control": {
+      "n_cmds": 29,
+      "max_v": 0.3,
+      "max_abs_omega": 1.2
+    },
+    "dynamic_avoid": {
+      "n_avoid_steps": 5,
+      "method": "velocity obstacle (VO)"
+    }
+  },
+  "external_evidence": {
+    "real_night_4seasons": "VGGT ATE=0.415m vs 自研VO冻结（docs/M5_stress_test.md §4.2）",
+    "synthetic_atlas": "VGGT 13 条件 ATE 0.016–0.049m（docs/M5_method_atlas）",
+    "edge": "M8 端侧三维表：0.5×ORB1000 最佳性价比（docs/M8_edge_deployment.md）"
+  }
+}

@@ -26,8 +26,20 @@ venv/
 # ===== 大体积中间产物（可重新生成；对应的 figs/metrics 仍进仓库）=====
 experiments/M2_recon/mesh.ply
 *.ply
-# GIF 的中间帧（GIF/MP4 本身进仓库，帧可由脚本重新生成）
+# GIF/MP4 的中间帧（最终 GIF/MP4 与 metrics.json 进仓库，帧可重新生成）
 experiments/**/gif_frames/
+experiments/**/fpv_frames/
+experiments/**/hud_frames/
+experiments/**/pal_frames/
+
+# Gazebo FPV 运行时生成的临时文件（可由脚本重新生成）
+experiments/P2_delivery_fpv_gazebo/_capture.py
+experiments/P2_delivery_fpv_gazebo/_delivery_fpv_world.sdf
+experiments/P2_delivery_fpv_gazebo/gz.log
+experiments/P2_delivery_fpv_gazebo/tb3.log
+
+# 动态障碍实验的探测临时世界
+experiments/P2_dynamic_obstacle/_probe_world.sdf
 
 # ===== 说明 =====
 # experiments/ 内的 figs/ 与 metrics.json 会随代码一起提交，

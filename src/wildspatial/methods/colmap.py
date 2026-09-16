@@ -58,7 +58,7 @@ class ColmapSfM(Method):
                 return MethodResult(np.zeros((0, 3)), np.zeros(0, int), ok=False,
                                     note="COLMAP 未重建出任何图像")
 
-            pos, idxs = [], []
+            pos, idxs, Tcw = [], [], []
             for img_id, im in recon.images.items():
                 name = os.path.basename(im.name)
                 if name in index_of:
@@ -69,12 +69,18 @@ class ColmapSfM(Method):
                     C = -R.T @ t                         # 相机光心（世界系）
                     pos.append(C)
                     idxs.append(index_of[name])
+                    # 完整位姿 T_cw（相机→世界），供下游反投影建图 / 占据栅格。
+                    Mcw = np.eye(4, dtype=float)
+                    Mcw[:3, :3] = R.T
+                    Mcw[:3, 3] = -R.T @ t
+                    Tcw.append(Mcw)
             return MethodResult(
                 positions=np.array(pos, dtype=float),
                 frame_indices=np.array(idxs, dtype=int),
                 ok=len(pos) > 3,
                 note="COLMAP 增量式 SfM（工业级传统几何）",
-                extra={"n_points3d": int(len(recon.points3D))},
+                extra={"n_points3d": int(len(recon.points3D)),
+                       "T_cw": Tcw},
             )
         except Exception as e:  # 任何运行错误都优雅降级
             import traceback

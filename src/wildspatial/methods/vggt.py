@@ -88,15 +88,25 @@ class VGGT(Method):
             extr, intr = pose_encoding_to_extri_intri(
                 pose_enc, image_size_hw=(int(H), int(W)))
             # extr: (1, S, 3, 4)，world→cam 的 [R|t]
-            R = extr[0, :, :3, :3].cpu().numpy()         # (S,3,3)
-            t = extr[0, :, :, 3].cpu().numpy()           # (S,3)
+            R = extr[0, :, :3, :3].cpu().numpy()         # (S,3,3) world→cam
+            t = extr[0, :, :, 3].cpu().numpy()           # (S,3)  world→cam
             C = np.einsum("sij,sj->si", R.transpose(0, 2, 1), t)
             C = -C                                        # 相机光心（世界系）
+
+            # 完整位姿 T_cw（相机→世界），供下游反投影建图 / 占据栅格（闭环层需要）。
+            # 因 extr 是 world→cam 变换 [R|t]，其逆 T_cw = [Rᵀ | -Rᵀ t]。
+            Tcw = []
+            for s in range(R.shape[0]):
+                M = np.eye(4, dtype=float)
+                M[:3, :3] = R[s].T
+                M[:3, 3] = -R[s].T @ t[s]
+                Tcw.append(M)
 
             # ---- 稠密输出（M4 深化：深度 / 点云质量，不止轨迹）----
             # return_dense=True 时才取，避免轨迹图谱占用额外显存。
             extra = {"intrinsics_available": intr is not None,
-                     "n_images": int(len(C))}
+                     "n_images": int(len(C)),
+                     "T_cw": Tcw}
             if kw.get("return_dense"):
                 depth = predictions.get("depth")
                 wp = predictions.get("world_points")

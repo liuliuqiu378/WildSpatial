@@ -81,6 +81,10 @@
 - **包含什么信息**：双目立体图像（`cam0`/`cam1`）+ **GNSS 轨迹真值**（公制定位）+ 相机标定。
 - **能做什么任务**：夜间自动驾驶感知、多传感器定位、立体深度。
 - **本项目怎么用**：`P0` 的 `autonomous_driving` 项目——也暴露了"**无深度 → 场景图只能跳过**"的真实限制（→ 引到 `F5` 需加激光雷达）。
+- **✅ 已实跑结果（方法动物园 ATE 对比，GNSS 真值）**：40 帧真实夜间切片（图像亮度均值仅 **3/255**）→
+  **VGGT 0.415m / COLMAP 0.444m 成功恢复 6.5m 轨迹；SIFT 与 LightGlue 增量 VO 全部跟踪丢失**。
+  结论详见 [`M5_stress_test.md` §4.2](M5_stress_test.md)，完整指标与轨迹图见
+  [`experiments/M5_4seasons_oldtown_night/`](../experiments/M5_4seasons_oldtown_night/README.md)。
 
 ### 3. NightCity（夜间城市驾驶）
 
@@ -168,6 +172,8 @@
     **水下细粒度 mean recall ≈ 0.001**（starfish 仅 2 TP / 21 FP，其余类 0 命中）——网页训练的通用开放词汇模型
     **在域偏移 + 细粒度生物类别上基本失效**，落地必须用域专用封闭集模型。详见 `experiments/D1_real_world/`。
   - ⚠️ 同名 `rf100-vl-underwater-objects`（isLinXu）为同类 Roboflow 镜像（train/valid/test 直出 jpg），可用作扩充。
+  - ✅ **数据集真实样例（直接抽样，非检测结果）**：[`experiments/datasets_showcase/figs/underwater.png`](../experiments/datasets_showcase/figs/underwater.png)
+    —— 散射/浑浊/偏色下的水下目标原图，**直观感受"水下成像退化"长什么样**（与上面 OWL-ViT 漏检结果对照：先看数据多难，再看模型多崩）。
 - **`remote-sensing-change-detection`**（遥感图像对 A/B/C/D/E + json）：航拍/无人机视角的变化检测。→ 对应"无人机解构世界"（M9）与遥感场景理解。
   - 结构：5 个文件夹各 24 组图像对（含标注 json）：`A/` 高分二号事前光学、`D/` 哨兵二号事后校正光学、
     `B/` 高分三号 SAR、`E/` 二值变化图、`json/` 变化多边形真值。
@@ -187,6 +193,9 @@
     跑「相机 RGB + 真实 LiDAR 深度 + 稠密真值 + 彩色 3D 点云」四联图。实测 4 帧：每帧约 **1.8 万真实 LiDAR 点**，
     深度范围 **3.0–79.7 m**，稠密真值 **5.5–9.9 万点**。详见 `experiments/M10_kitti_lidar/` 与 `docs/F5_vision_lidar_fusion.md` §4.2。
   - 原 TUM demo（RGB-D 反投影，0px 残差）保留为**几何自洽证明**；KITTI demo 升级为**真实传感器验证**。
+  - ✅ **P4 真实驾驶动态建图已消费**（`scripts/p4_real_driving.py`）：同一数据的 drive 0023 连续 30 帧当"实时输入流"——
+    VGGT 用真实 RGB 定位（125.16m 轨迹）+ 真实 LiDAR 定标（×72.4）+ 56.5 万真实点累积 BEV →
+    第一视角+俯视全景双视角视频回放 → [`experiments/P4_real_driving/`](../experiments/P4_real_driving/README.md)（零下载、非仿真）。
 
 ![水下开放词汇检测：绿=真值，粉=OWL-ViT 预测（真实散射域下几乎全漏检）](../experiments/D1_real_world/figs/underwater_det.png)
 

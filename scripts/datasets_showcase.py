@@ -55,8 +55,9 @@ def _show_grid(imgs, titles, out, suptitle, ncol=4, cmaps=None):
     print(f"[✓] {os.path.basename(out)}  ({n} 样例)")
 
 
-def showcase_sample_dir(name, path, out_name, suptitle, n=8):
-    files = sorted(glob.glob(os.path.join(path, "*")))
+def showcase_sample_dir(name, path, out_name, suptitle, n=8, recursive=False):
+    pat = "**/*" if recursive else "*"
+    files = sorted(glob.glob(os.path.join(path, pat), recursive=recursive))
     files = [f for f in files if f.lower().endswith((".jpg", ".jpeg", ".png"))][:n]
     if not files:
         print(f"[·] {name}: 无样例图（跳过）"); return
@@ -174,10 +175,10 @@ def main():
         os.path.join(MS, "OmniData__NDISPark_Night_and_Day_Instance_Segmented_etc", "raw", "ndis_park.zip"),
         "ndispark.png", "NDISPark：夜间/白天停车场（实例分割）", n=8, pattern="imgs/")
 
-    # 水下检测
+    # 水下检测（图像在 train/valid/test 子目录，需递归）
     showcase_sample_dir(
         "underwater", os.path.join(MS, "isLinXu__rf100-vl-underwater-objects"),
-        "underwater.png", "rf100 水下目标检测（散射/浑浊/偏色）")
+        "underwater.png", "rf100 水下目标检测（散射/浑浊/偏色）", recursive=True)
 
     # ModelNet40-C（点云 + 退化）
     showcase_modelnet("modelnet40c.png")

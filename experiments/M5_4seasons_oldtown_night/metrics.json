@@ -1,0 +1,45 @@
+{
+  "zip": "data/raw/4seasons/oldtown_night/stereo.zip",
+  "n_frames": 40,
+  "calib": [
+    501.4757919305817,
+    501.4757919305817,
+    421.7953735163109,
+    167.65799492501083
+  ],
+  "gt_full_path_len_m": 6.753669031123048,
+  "results": {
+    "handcrafted_vo": {
+      "ate_rmse_m": 1.980531223862097,
+      "est_path_len_m": 0.0,
+      "gt_path_len_m": 6.753669031123048,
+      "degenerate": true,
+      "ok": false,
+      "note": "自研 SIFT+VO（M1）：比值检验 + RANSAC + 三角化 + PnP + 运动护栏"
+    },
+    "colmap_sfm": {
+      "ate_rmse_m": 0.44427709602368676,
+      "est_path_len_m": 6.578859754897974,
+      "gt_path_len_m": 6.753669031123048,
+      "degenerate": false,
+      "ok": true,
+      "note": "COLMAP 增量式 SfM（工业级传统几何）"
+    },
+    "vggt": {
+      "ate_rmse_m": 0.4150287341855229,
+      "est_path_len_m": 6.524017314060807,
+      "gt_path_len_m": 6.753669031123048,
+      "degenerate": false,
+      "ok": true,
+      "note": "VGGT 前馈 3D 基础模型（一次前向出相机轨迹 + 深度/点云）"
+    },
+    "lightglue_vo": {
+      "ate_rmse_m": 1.980531223862097,
+      "est_path_len_m": 0.0,
+      "gt_path_len_m": 6.753669031123048,
+      "degenerate": true,
+      "ok": false,
+      "note": "SuperPoint+LightGlue 学习式前端 + M1 几何后端（单目 VO）"
+    }
+  }
+}
