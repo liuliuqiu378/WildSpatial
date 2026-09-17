@@ -120,7 +120,7 @@ if 主方法在『motion_blur』退化 → 路径长=0（塌缩）:
 - **数据**：TUM RGB-D `fr1/desk`（带真值位姿 + 深度），4 方法均可用。
 - **鲁棒性对比**（方法 × 退化 ATE，米；红=塌缩）：
 
-![鲁棒性对比](experiments/P3_flagship_delivery/figs/robustness_contrast.png)
+![鲁棒性对比](../experiments/P3_flagship_delivery/figs/robustness_contrast.png)
 
 - **融合兜底决策**：`主方法 handcrafted_vo 在 motion_blur 退化（路径长=0）→ 触发融合兜底，切换到 vggt（ATE=0.030m）`。
 - **闭环（托底方法 VGGT，尺度系数 1.17）**：
@@ -128,20 +128,20 @@ if 主方法在『motion_blur』退化 → 路径长=0（塌缩）:
   - A\* 规划 **30 步**；差速控制 **29 条指令**（v_max 0.30 m/s，ω_max 1.2 rad/s）；
   - 速度障碍法触发动态避让 **5 步**。
 
-![托底轨迹建图 + A* 规划](experiments/P3_flagship_delivery/figs/map_plan.png)
-![差速轮控制指令](experiments/P3_flagship_delivery/figs/control_cmd.png)
-![动态避障](experiments/P3_flagship_delivery/figs/dynamic_avoid.png)
+![托底轨迹建图 + A* 规划](../experiments/P3_flagship_delivery/figs/map_plan.png)
+![差速轮控制指令](../experiments/P3_flagship_delivery/figs/control_cmd.png)
+![动态避障](../experiments/P3_flagship_delivery/figs/dynamic_avoid.png)
 
 ### 5.2 外部真实证据（非合成，证明「不是只在玩具数据上成立」）
 - **真实夜间驾驶（4Seasons oldtown_night）**：40 帧真实夜间切片（亮度均值 3/255），
   **VGGT ATE=0.415 m vs 自研 VO 冻结在原点**（见 `M5_stress_test.md §4.2` + `experiments/M5_4seasons_oldtown_night/`）。
 
-  ![4Seasons 真实夜间轨迹](experiments/M5_4seasons_oldtown_night/figs/traj_vggt.png)
+  ![4Seasons 真实夜间轨迹](../experiments/M5_4seasons_oldtown_night/figs/traj_vggt.png)
 
 - **合成退化失效图谱（M5，13 条件）**：VGGT 全档 ATE **0.016–0.049 m** 稳压，COLMAP 仅高斯噪声崩，自研 VO 多档塌缩。
-  ![M5 失效图谱](experiments/M5_method_atlas/figs/atlas_ate.png)
+  ![M5 失效图谱](../experiments/M5_method_atlas/figs/atlas_ate.png)
 - **端侧三维表（M8）**：0.5× ORB1000 最佳性价比（延迟/精度/算力预算）。
-  ![M8 权衡](experiments/M8_edge/figs/tradeoff.png)
+  ![M8 权衡](../experiments/M8_edge/figs/tradeoff.png)
 
 ---
 
