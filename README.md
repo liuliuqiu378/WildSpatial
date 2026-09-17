@@ -96,6 +96,7 @@ F4（你的知识地图，先建立信心）
 | [`docs/F6_decision_control.md`](docs/F6_decision_control.md) | 基础 | **决策与控制**：感知→动作的后半段（WorldModel 接口→代价地图→规划→控制→兜底分层），补齐"感知控制"全栈 |
 | [`docs/F7_hardware_primer.md`](docs/F7_hardware_primer.md) | 基础 | **硬件扫盲**：感知系统"器官"清单（摄像头/激光雷达/毫米波雷达/深度相机/IMU/编码器/电机驱动/计算平台/同步标定 选型口诀 + 数据形态 + 园区机器人选型清单） |
 | [`docs/F8_real_scenario_walkthrough.md`](docs/F8_real_scenario_walkthrough.md) | 基础 | **全栈贯通**：用「园区夜间配送」一趟真实任务串起 硬件→感知→WorldModel→规划→控制→兜底，每步配真实图，把碎片拼成可 replay 的全栈（与 `F7 §13` 两面互补） |
+| [`docs/F9_perception_methods.md`](docs/F9_perception_methods.md) | 基础 | **方法选型与工程清单**：单目/双目/2D·3D 检测/点云配准/场景表示/融合 逐族**四联表**（一句话定位 + 精度量级 + 算力·显存 + 需要的数据量，钉本项目实测）；+ 训练数据量·类别数·长尾·**未见物体 OOD**、算力设备表、初学者想不到的工程清单 |
 | [`docs/M2_depth_reconstruction.md`](docs/M2_depth_reconstruction.md) | 入门 | 深度→点云→网格（初学者版） |
 | [`docs/M4_foundation_models.md`](docs/M4_foundation_models.md) | 入门 | 前馈 3D 基础模型（初学者版） |
 | [`docs/M5_stress_test.md`](docs/M5_stress_test.md) | 入门 | 压力测试矩阵（初学者版，核心资产） |
@@ -110,10 +111,11 @@ F4（你的知识地图，先建立信心）
 | [`docs/P1_field_projects.md`](docs/P1_field_projects.md) | 实战 | **工程叙事层**：四个真实场景（扫地/送物/自动驾驶/无人船）的完整工程叙事 + 三视角讲解 + 初学者常漏环节 |
 | [`docs/P2_simulation.md`](docs/P2_simulation.md) | 实战 | **闭环仿真平台**：CARLA/Gazebo/Habitat 选型对比 + Gazebo+ROS2（免 sudo）接入方案（对照工业级 Nav2）+ 机器人第一视角 3D 送货演示（合成版 + Gazebo 真实相机版） |
 | [`docs/P3_field_project.md`](docs/P3_field_project.md) | 实战 | **面试旗舰项目**：恶劣环境鲁棒感知（VGGT vs 传统 VO）+ 诊断驱动融合兜底 + 感知→规划→控制闭环；所有模块（F/M/P0–P2）的收敛点，可讲解的完整落地项目 |
-| [`docs/P4_real_driving.md`](docs/P4_real_driving.md) | 实战 | **真实驾驶动态建图**：真实 RGB + 真实 LiDAR（KITTI，零下载）当实时输入流 → VGGT 视觉定位 + LiDAR 定标 → 逐帧 BEV 增量建图 → 第一视角+俯视全景双视角视频回放全程 |
+| [`docs/P4_real_driving.md`](docs/P4_real_driving.md) | 实战 | **真实驾驶动态建图**：真实 RGB + 真实 LiDAR（KITTI，零下载）当实时输入流 → VGGT 视觉定位 + LiDAR 定标 → 逐帧 BEV 增量建图 → 第一视角+俯视全景双视角视频回放全程（含 §⑨ 硬件对应 + §⑩ 参数与规则设置） |
+| [`docs/P5_real_driving_closed_loop.md`](docs/P5_real_driving_closed_loop.md) | 实战 | **真实驾驶端到端闭环**：把 P4 的建图接上 规划→控制（占据栅格 → **inflation 膨胀** → **A\*** → **差速轮 (v,ω)** → **VO 避障**），在同一份 KITTI 真实驾驶数据上跑通**感知→控制全链路** |
 
 > 📌 文档图用相对路径引用 `experiments/<module>/figs/`，已随代码提交，**在 GitHub 上直接显示**。
-> ✅ **基础篇 `F0–F8` + 模块 `M0–M9` 教学文档已全部覆盖**；`M8` 端侧为初学者版（三维表已用本机缩算力预算模拟实测，无需真机），`M6/M9` 为初学者版（融合救援与场景图 demo 已实测跑通）。`P0/P1` 实战项目层已建：P0 是多场景抽象管线，P1 是面向面试官/客户的工程叙事 + 园区服务机器人感知→规划→控制闭环实跑；`F6` 决策与控制补齐"感知控制"后半段（WorldModel→costmap→规划→控制→兜底），`F7` 硬件扫盲补齐"算法人必懂的硬件器官"（摄像头/激光雷达/雷达/电机/选型/同步标定），`F8` 全栈贯通用「园区夜间配送」一趟任务把硬件→感知→控制串成一条线（每步真实图），与 `P2_simulation.md §3.7` 架构认知呼应——本教程已从"纯感知算法"升级为"硬件→感知→控制 全栈"，且所有篇章都能在同一个真实场景里被"看见"。
+> ✅ **基础篇 `F0–F9` + 模块 `M0–M9` 教学文档已全部覆盖**；`M8` 端侧为初学者版（三维表已用本机缩算力预算模拟实测，无需真机），`M6/M9` 为初学者版（融合救援与场景图 demo 已实测跑通）。`P0/P1` 实战项目层已建：P0 是多场景抽象管线，P1 是面向面试官/客户的工程叙事 + 园区服务机器人感知→规划→控制闭环实跑；`F6` 决策与控制补齐"感知控制"后半段（WorldModel→costmap→规划→控制→兜底），`F7` 硬件扫盲补齐"算法人必懂的硬件器官"（摄像头/激光雷达/雷达/电机/选型/同步标定），`F8` 全栈贯通用「园区夜间配送」一趟任务把硬件→感知→控制串成一条线（每步真实图），`F9` 方法选型与工程清单补齐"该不该用、用得起吗"（单目/双目/检测/雷达逐族四联表 + 数据量/类别/长尾/OOD/算力/工程坑），`P5` 真实驾驶端到端闭环把 `P4` 的真实感知接上 规划→控制（inflation→A\*→差速轮→VO 避障），与 `P2_simulation.md §3.7` 架构认知呼应——本教程已从"纯感知算法"升级为"硬件→感知→控制 全栈 + 真实数据闭环 + 选型落地"，且所有篇章都能在同一个真实场景里被"看见"。
 
 ### 🖼️ 成果一览（本项目真实实验产出，点进文档看细节）
 
@@ -132,6 +134,16 @@ F4（你的知识地图，先建立信心）
 | 端侧算力权衡（M8） | 实战项目总览（P0） |
 |---|---|
 | ![M8 权衡](experiments/M8_edge/figs/tradeoff.png) | ![数据集样例](experiments/projects/figs/dataset_samples.png) |
+
+**真实驾驶**（P4 建图 → P5 闭环，同一份 KITTI 真实 RGB+LiDAR）：
+
+| 双视角回放：地图随车生长（P4） | 真实 LiDAR 累积占据栅格（P5） |
+|---|---|
+| ![P4 双视角](experiments/P4_real_driving/figs/driving_dualview.gif) | ![P5 占据栅格](experiments/P5_real_driving_closed_loop/figs/bev_occupancy.png) |
+
+| inflation 膨胀（原始栅格→代价地图，P5） | A\* 规划 + 控制（P5） |
+|---|---|
+| ![P5 膨胀](experiments/P5_real_driving_closed_loop/figs/costmap_inflated.png) | ![P5 规划](experiments/P5_real_driving_closed_loop/figs/map_plan.png) |
 
 ---
 
@@ -179,6 +191,16 @@ F4（你的知识地图，先建立信心）
 | ONNX Runtime | 跨平台 | 通用 | 优化较弱 | M8 |
 | **RKNN** | Rockchip RK3588 | 国产芯片 | 生态小 | M8（三维表已实测，真机编译待补） |
 | **CANN/昇腾** | 华为 Ascend | 国产、算力大 | 工具链重 | M8（三维表已实测，真机编译待补） |
+
+### 6.6 选型速查与工程清单（→ 详见 `docs/F9_perception_methods.md`）
+上面 6.1–6.5 讲"有什么工具"；`F9` 进一步给出"**该怎么选**"——每个方法族一张**四联表**：
+
+| 一句话定位 | 精度量级 | 算力 / 显存 | 需要的数据量 |
+|---|---|---|---|
+| 这个方法解决什么、代表是谁 | ATE / mAP / mIoU 量级 | GPU 显存 + 延迟 | 零训练 / 预训练 / 需自训多少 |
+
+覆盖：单目（特征点 SfM/VO · COLMAP · 学习式前端 · 单目深度 · VGGT）、双目（SGBM · 学习立体 · MVS）、检测（2D 两阶段/单阶段/DETR/分割/开放词汇 · 3D PointPillars/CenterPoint/BEVFusion）、LiDAR（ICP/GICP/NDT · LiDAR SLAM · 地面分割/聚类/3D 语义分割）、场景表示（点云/网格/体素/TSDF/占据/BEV/NeRF/3DGS）、融合（标定/时间同步/前中后架构）。
+并回答初学者的高频问题：**训练要多少数据？多少类？长尾怎么办？没见过的东西怎么办（OOD）？要什么算力的设备？** 以及**初学者想不到但一上真机就撞上**的工程清单（时钟同步、标定漂移、运动畸变、TF 树、标注成本、动态物体污染建图、回环、兜底降级、评测诚实性、功能安全）。
 
 ---
 

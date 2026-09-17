@@ -257,6 +257,12 @@
 | 行人距离 vs 避障指令 | `experiments/P2_dynamic_obstacle/figs/ped_tracking.png` |
 | 差速轮控制指令序列 | `experiments/P1_service_robot/figs/control_cmd.png` |
 | 第一视角送货（①②③⑥ 工况） | `experiments/P2_delivery_fpv_gazebo/figs/keyframes.png` |
+| **本套方法在真实驾驶数据上**（占据→膨胀→A\*→控制→避障） | `experiments/P5_real_driving_closed_loop/figs/` — **`P5`** |
+
+> 📌 **`P5 真实驾驶端到端闭环` 就是本篇方法在"真实车载 RGB + 真实 LiDAR"上的完整落地**：
+> §2 占据栅格 → §2.5 inflation 膨胀 → §3 A\* → §5 差速轮 (v,ω) → §4 VO 避障，
+> 全部跑在同一份 KITTI 真实驾驶数据上。想验证"这套控制链条在真实数据上长什么样"，直接看 `P5`。
 
 > 读完本篇，你已具备"感知→控制"全链路的认知骨架。下一步：
-> 跑 `scripts/p2_delivery_fpv_gazebo.py` 看真实 FPV 闭环，再回头翻 `P1_field_projects.md` / `P2_simulation.md` 看工程全貌。
+> 跑 `scripts/p2_delivery_fpv_gazebo.py` 看真实 FPV 闭环，再回头翻 `P1_field_projects.md` / `P2_simulation.md` 看工程全貌；
+> 想看在**真实驾驶数据**上跑通，读 `P5_real_driving_closed_loop.md`。

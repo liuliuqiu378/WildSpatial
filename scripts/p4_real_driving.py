@@ -13,11 +13,15 @@
   1. 取同一 drive 的连续片段，作为"实时"输入流（真实驾驶时序，带真实噪声）。
   2. 项目方法动物园 **VGGT**：用真实 RGB 做视觉定位，一次前向出相机轨迹 T_cw（up to scale）。
   3. 真实 LiDAR 深度给 VGGT 轨迹定标（median 比例）→ 度量级轨迹。
-  4. 每帧真实 LiDAR 点云按 VGGT 位姿反投影到世界 → 增量累积成俯视（BEV）高度/占据图。
-  5. 双视角视频：左 = 第一视角 RGB + 真实 LiDAR 扫描；右 = 俯视全景建图 + 轨迹 + 车体朝向。
+ 4. 每帧真实 LiDAR 点云按 VGGT 位姿反投影到世界 → 增量累积成俯视（BEV）高度/占据图。
+ 5. **移动目标检测**：把上一帧相机系 LiDAR 点用相邻帧相对位姿反投影到当前相机系，在图像
+    平面重建"静态预期深度"；当前帧中无法被该预期解释的离地点 → 移动车辆/行人，双视角标红。
+ 6. 双视角视频：左 = 第一视角 RGB + 真实 LiDAR 扫描（移动目标标红）；右 = 俯视全景建图 +
+    轨迹 + 车体朝向 + 移动目标（红点）。
 
 诚实边界：
   - 轨迹来自视觉模型（非 GPS/IMU 真值）；尺度由真实 LiDAR 锚定。
+  - 移动目标检测为启发式（自运动补偿帧间差分），可能误标"新揭示的静态障碍"，已用离地约束抑制路面误检；属于演示级而非检测器 benchmark。
   - 该基准无逐帧真值位姿，故不报 ATE；只报轨迹长度、尺度因子、点云量等可量化指标。
   - velodyne_raw 为真实稀疏激光（非仿真），正是真实雷达形态。
 
@@ -162,6 +166,68 @@ def build_world_points(frames, res, scale):
 
 
 # --------------------------------------------------------------------------- #
+# 4b. 相机系 LiDAR 点（用于帧间差分，保留图像像素坐标）
+# --------------------------------------------------------------------------- #
+def build_cam_points(frames):
+    """每帧 LiDAR 在相机系 (X,Y,Z) 及对应 image_02 像素 (u,v)。"""
+    cam = []
+    for f in frames:
+        ld, K = f["lidar"], f["K"]
+        H, W = ld.shape
+        fx, fy, cx, cy = K[0, 0], K[1, 1], K[0, 2], K[1, 2]
+        vv, uu = np.meshgrid(np.arange(H), np.arange(W), indexing="ij")
+        Z = ld.reshape(-1)
+        X = (uu.reshape(-1) - cx) * Z / fx
+        Y = (vv.reshape(-1) - cy) * Z / fy
+        mask = np.isfinite(Z)
+        pts = np.stack([X[mask], Y[mask], Z[mask],
+                        uu.reshape(-1)[mask].astype(float),
+                        vv.reshape(-1)[mask].astype(float)], axis=-1)
+        cam.append(pts)
+    return cam
+
+
+# --------------------------------------------------------------------------- #
+# 4c. 移动目标检测：自运动补偿 + 累积静态地图差分
+#     把前若干帧的真实 LiDAR 世界点（同一套 VGGT 位姿，故与当前帧自洽、抗漂移）
+#     反投影到当前相机系，在图像平面重建“稠密静态预期深度”；当前帧中无法被该
+#     静态预期解释、且离地点 → 移动车辆/行人，双视角标红。
+#     返回 dyn_world[t] (N,3 世界系, 已定标) 与 dyn_uv[t] (N,2 image_02 像素)。
+# --------------------------------------------------------------------------- #
+def detect_dynamic(frames, cam, per, res, scale):
+    empty3 = lambda: np.zeros((0, 3), float)
+    empty2 = lambda: np.zeros((0, 2), float)
+    if res is None:
+        return [empty3() for _ in frames], [empty2() for _ in frames]
+    Tcw = res.extra["T_cw"]
+    cam_h = 1.65                           # KITTI image_02 相机离地高度（米）
+    r = 1.2                                # 世界系邻域基础半径（米），容忍 VGGT 漂移
+    dyn_world, dyn_uv = [], []
+    accum = np.zeros((0, 3), float)        # 累积静态地图（世界系，已定标）
+    from scipy.spatial import cKDTree
+    for t in range(len(frames)):
+        cur_w = per[t]                     # 当前帧世界点（已定标）
+        cur_c = cam[t]                     # 当前帧相机系点（含像素 u,v 与 Y）
+        if len(accum) == 0 or len(cur_w) == 0:   # 首帧无前序地图可比
+            dyn_world.append(empty3()); dyn_uv.append(empty2())
+            if len(cur_w):
+                accum = cur_w.copy()
+            continue
+        # 3D 邻近匹配：当前世界点若能在累积静态地图中找到近邻 → 静态（被解释）
+        # 匹配半径随深度增大（位姿角误差在远处放大为位置误差）
+        d2, _ = cKDTree(accum).query(cur_w, k=1)
+        rad = r + 0.03 * cur_c[:, 2]
+        explained = d2 <= rad
+        # 离地判定：相机系 Y(下正) 明显小于相机高度 → 位于地面之上（障碍/车辆/行人）
+        offground = cur_c[:, 1] < (cam_h - 0.5)
+        dmask = (~explained) & offground
+        duv = cur_c[dmask, 3:5].astype(float)
+        dyn_world.append(cur_w[dmask]); dyn_uv.append(duv)
+        accum = np.vstack([accum, cur_w])
+    return dyn_world, dyn_uv
+
+
+# --------------------------------------------------------------------------- #
 # 5. 双视角回放（第一视角 RGB+LiDAR  |  俯视 BEV 建图+轨迹+车体）
 # --------------------------------------------------------------------------- #
 def _height_color(y, ymin, ymax):
@@ -173,7 +239,7 @@ def _height_color(y, ymin, ymax):
     return (b, g, r)
 
 
-def render(frames, per, res, scale, out_mp4):
+def render(frames, per, res, scale, out_mp4, dyn_world=None, dyn_uv=None, fps=3.0):
     has_pose = res is not None
     if has_pose:
         positions = res.positions * scale          # (S,3) 度量级相机光心
@@ -220,12 +286,13 @@ def render(frames, per, res, scale, out_mp4):
     fourcc = cv2.VideoWriter_fourcc(*"mp4v")
     out_w = (left_disp[0] + 6 + BW) // 2 * 2
     out_h = LH // 2 * 2
-    vw = cv2.VideoWriter(out_mp4, fourcc, 6.0, (out_w, out_h))
+    vw = cv2.VideoWriter(out_mp4, fourcc, fps, (out_w, out_h))
     if not vw.isOpened():
         print("[!] 视频写入器打不开，仅输出关键帧 PNG。")
         vw = None
 
-    keyframes = max(1, len(frames) // 5)
+    # 关键帧（示例帧）：保存间隔更小 → 展示更多例子（约每 3 帧一张）
+    keyframes = max(1, len(frames) // 10)
     saved = []
 
     for t, f in enumerate(frames):
@@ -252,6 +319,11 @@ def render(frames, per, res, scale, out_mp4):
             ], np.int32)
             cv2.fillPoly(bev_disp, [tri], (0, 0, 255))
             cv2.circle(bev_disp, (cx_px, cz_px), 4, (255, 255, 255), -1)
+            # 移动目标（红色，俯视图）
+            if dyn_world is not None and t < len(dyn_world) and len(dyn_world[t]):
+                for (x, y, z) in dyn_world[t]:
+                    dx, dz = to_disp(x, z)
+                    cv2.circle(bev_disp, (int(dx), int(dz)), 3, (0, 0, 255), -1)
 
         # ---- 左：第一视角 RGB + 真实 LiDAR 扫描（距离着色：近=暖 远=蓝）----
         left = cv2.resize(f["rgb"], left_disp)
@@ -269,12 +341,22 @@ def render(frames, per, res, scale, out_mp4):
             left[py, px + 1] = c
             left[py + 1, px] = c
             left[py + 1, px + 1] = c
+        # 移动目标（红色，第一视角）
+        ndyn = 0
+        if dyn_uv is not None and t < len(dyn_uv) and len(dyn_uv[t]):
+            du = np.clip((dyn_uv[t][:, 0] * sx).astype(int), 0, left_disp[0] - 2)
+            dv = np.clip((dyn_uv[t][:, 1] * sy).astype(int), 0, LH - 2)
+            ndyn = len(du)
+            for (px, py) in zip(du, dv):
+                cv2.circle(left, (px, py), 2, (0, 0, 255), -1)
 
         # ---- 合成（固定尺寸，无需二次缩放）----
         sep = np.full((LH, 6, 3), 200, np.uint8)
         combo = np.hstack([left, sep, bev_disp])
         cv2.putText(combo, f"frame {t+1}/{len(frames)}  real RGB + real LiDAR (KITTI)",
                     (10, 22), cv2.FONT_HERSHEY_SIMPLEX, 0.6, (230, 230, 230), 2)
+        cv2.putText(combo, f"moving objects (red): {ndyn}",
+                    (10, 44), cv2.FONT_HERSHEY_SIMPLEX, 0.6, (80, 80, 255), 2)
         cv2.putText(combo, "EGOCENTRIC (camera)", (10, LH - 14),
                     cv2.FONT_HERSHEY_SIMPLEX, 0.5, (180, 220, 255), 1)
         cv2.putText(combo, "BEV MAP (built from real LiDAR)",
@@ -297,7 +379,7 @@ def render(frames, per, res, scale, out_mp4):
     return saved
 
 
-def render_final_map(frames, per, res, scale):
+def render_final_map(frames, per, res, scale, dyn_world=None):
     """高质量静态终图：完整 BEV（高度着色）+ 完整轨迹 + 起终点。"""
     allp = np.concatenate([p for p in per if len(p) > 0], axis=0)
     xmin, xmax = allp[:, 0].min(), allp[:, 0].max()
@@ -321,6 +403,11 @@ def render_final_map(frames, per, res, scale):
                 label="estimated trajectory (VGGT)")
         ax.plot(pos[0, 0], pos[0, 2], "go", ms=10, label="start")
         ax.plot(pos[-1, 0], pos[-1, 2], "ro", ms=10, label="end")
+        if dyn_world is not None:
+            dpts = np.concatenate([p for p in dyn_world if len(p) > 0], axis=0)
+            if len(dpts):
+                ax.scatter(dpts[:, 0], dpts[:, 2], s=10, c="red",
+                           label="moving objects (LiDAR frame-diff)")
     ax.set_xlabel("X right (m)"); ax.set_ylabel("Z forward (m)")
     ax.set_title("Real-driving BEV map built from KITTI real LiDAR\n"
                  "(height-colored: blue=ground, warm=obstacles/structures)")
@@ -341,12 +428,16 @@ def main():
     ap.add_argument("--drive", default="2011_09_26_drive_0023_sync")
     ap.add_argument("--max-frames", type=int, default=30)
     ap.add_argument("--stride", type=int, default=1)
+    ap.add_argument("--fps", type=float, default=3.0,
+                    help="双视角视频帧率（默认 3.0 = 半速播放，对比原 6 fps）")
     ap.add_argument("--out", default=OUT)
     args = ap.parse_args()
 
     os.makedirs(args.out, exist_ok=True)
     figs = os.path.join(args.out, "figs")
     os.makedirs(figs, exist_ok=True)
+    global FIGS
+    FIGS = figs                       # 关键帧/终图跟随 --out，支持多场景分目录
 
     frames = load_drive(args.drive, args.max_frames, args.stride)
     if not frames:
@@ -357,6 +448,8 @@ def main():
     scale = compute_scale(res, frames) if res else 1.0
     print(f"[*] 尺度定标因子（真实LiDAR / VGGT）= {scale:.3f}")
     per = build_world_points(frames, res, scale)
+    cam = build_cam_points(frames)
+    dyn_world, dyn_uv = detect_dynamic(frames, cam, per, res, scale)
 
     n_points = [int(len(p)) for p in per]
     total_points = int(sum(n_points))
@@ -366,9 +459,12 @@ def main():
         traj_len = float(np.sum(np.linalg.norm(np.diff(pos, axis=0), axis=1)))
 
     mp4 = os.path.join(args.out, "driving_dualview.mp4")
-    saved = render(frames, per, res, scale, mp4)
-    final_map = render_final_map(frames, per, res, scale)
+    saved = render(frames, per, res, scale, mp4, dyn_world=dyn_world, dyn_uv=dyn_uv,
+                   fps=args.fps)
+    final_map = render_final_map(frames, per, res, scale, dyn_world=dyn_world)
 
+    dyn_counts = [int(len(d)) for d in dyn_uv]
+    total_dynamic = int(sum(dyn_counts))
     metrics = {
         "dataset": "KITTI depth_completion (val_selection_cropped, image_02)",
         "drive": args.drive,
@@ -377,6 +473,11 @@ def main():
         "trajectory_length_m": round(traj_len, 2),
         "total_real_lidar_points": total_points,
         "real_lidar_points_per_frame": n_points,
+        "moving_object_detection": {
+            "method": "LiDAR frame-diff with ego-motion compensation (VGGT relative pose)",
+            "total_detected_points": total_dynamic,
+            "detected_points_per_frame": dyn_counts,
+        },
         "video": os.path.relpath(mp4, ROOT),
         "keyframes": [os.path.relpath(s, ROOT) for s in saved],
         "final_map": os.path.relpath(final_map, ROOT),
@@ -387,7 +488,7 @@ def main():
     with open(os.path.join(args.out, "metrics.json"), "w") as fh:
         json.dump(metrics, fh, indent=2, ensure_ascii=False)
     print(f"[✓] metrics → {os.path.join(args.out, 'metrics.json')}")
-    print(f"    轨迹长度={metrics['trajectory_length_m']} m | 真实LiDAR点={total_points}")
+    print(f"    轨迹长度={metrics['trajectory_length_m']} m | 真实LiDAR点={total_points} | 移动目标点={total_dynamic}")
     return 0
 
 

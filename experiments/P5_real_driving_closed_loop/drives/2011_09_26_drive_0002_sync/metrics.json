@@ -1,0 +1,57 @@
+{
+  "project": "real_driving_closed_loop",
+  "title": "真实驾驶数据上的感知→建图→规划→控制端到端闭环",
+  "dataset": "KITTI depth_completion (val_selection_cropped, image_02)",
+  "drive": "2011_09_26_drive_0002_sync",
+  "n_frames": 12,
+  "scale_factor_lidar_over_vggt": 59.1869,
+  "perception_frontend": {
+    "source": "P4 (scripts/p4_real_driving.py, 复用)",
+    "total_real_lidar_points": 225904,
+    "moving_object_detection": {
+      "method": "LiDAR frame-diff with ego-motion compensation (P4)",
+      "total_detected_points": 1187
+    }
+  },
+  "mapping": {
+    "occupancy_shape": [
+      362,
+      324
+    ],
+    "res_m": 0.4,
+    "occupied_cells": 9147,
+    "free_cells": 5398,
+    "moving_cells_excluded": 2962
+  },
+  "inflation": {
+    "robot_radius_m": 0.5,
+    "safety_margin_m": 0.3,
+    "inflated_cells": 8029
+  },
+  "closed_loop": {
+    "start_cell": [
+      0,
+      210
+    ],
+    "goal_cell": [
+      361,
+      210
+    ],
+    "path_steps": 368,
+    "path_length_m": 153.44,
+    "n_cmds": 367,
+    "max_v": 0.8,
+    "max_abs_omega": 1.5,
+    "n_avoid_steps": 10,
+    "n_dynamic_obstacle_points": 1187
+  },
+  "figs": {
+    "bev_occupancy": "experiments/P5_real_driving_closed_loop/drives/2011_09_26_drive_0002_sync/figs/bev_occupancy.png",
+    "costmap_inflated": "experiments/P5_real_driving_closed_loop/drives/2011_09_26_drive_0002_sync/figs/costmap_inflated.png",
+    "map_plan": "experiments/P5_real_driving_closed_loop/drives/2011_09_26_drive_0002_sync/figs/map_plan.png",
+    "control_cmd": "experiments/P5_real_driving_closed_loop/drives/2011_09_26_drive_0002_sync/figs/control_cmd.png",
+    "dynamic_avoid": "experiments/P5_real_driving_closed_loop/drives/2011_09_26_drive_0002_sync/figs/dynamic_avoid.png",
+    "closed_loop_gif": "experiments/P5_real_driving_closed_loop/drives/2011_09_26_drive_0002_sync/figs/closed_loop.gif"
+  },
+  "note": "真实 RGB + 真实 LiDAR 输入（P4 前端）；BEV 占据栅格由真实 LiDAR 累积并剔除移动目标；inflation 后 A* 规划 + 差速轮控制 + VO 简化避障。自车运动的『执行』为运动学仿真；地图来自视觉估计（无真值位姿），非带真值闭环评测。"
+}

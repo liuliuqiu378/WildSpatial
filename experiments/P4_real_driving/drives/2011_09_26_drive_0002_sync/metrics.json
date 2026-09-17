@@ -1,0 +1,57 @@
+{
+  "dataset": "KITTI depth_completion (val_selection_cropped, image_02)",
+  "drive": "2011_09_26_drive_0002_sync",
+  "n_frames": 12,
+  "scale_factor_lidar_over_vggt": 59.1869,
+  "trajectory_length_m": 71.87,
+  "total_real_lidar_points": 225904,
+  "real_lidar_points_per_frame": [
+    18970,
+    18910,
+    18903,
+    18704,
+    19003,
+    18909,
+    19089,
+    18851,
+    18867,
+    18604,
+    18600,
+    18494
+  ],
+  "moving_object_detection": {
+    "method": "LiDAR frame-diff with ego-motion compensation (VGGT relative pose)",
+    "total_detected_points": 1187,
+    "detected_points_per_frame": [
+      0,
+      171,
+      171,
+      410,
+      16,
+      43,
+      36,
+      40,
+      26,
+      113,
+      40,
+      121
+    ]
+  },
+  "video": "experiments/P4_real_driving/drives/2011_09_26_drive_0002_sync/driving_dualview.mp4",
+  "keyframes": [
+    "experiments/P4_real_driving/drives/2011_09_26_drive_0002_sync/figs/frame_000.png",
+    "experiments/P4_real_driving/drives/2011_09_26_drive_0002_sync/figs/frame_001.png",
+    "experiments/P4_real_driving/drives/2011_09_26_drive_0002_sync/figs/frame_002.png",
+    "experiments/P4_real_driving/drives/2011_09_26_drive_0002_sync/figs/frame_003.png",
+    "experiments/P4_real_driving/drives/2011_09_26_drive_0002_sync/figs/frame_004.png",
+    "experiments/P4_real_driving/drives/2011_09_26_drive_0002_sync/figs/frame_005.png",
+    "experiments/P4_real_driving/drives/2011_09_26_drive_0002_sync/figs/frame_006.png",
+    "experiments/P4_real_driving/drives/2011_09_26_drive_0002_sync/figs/frame_007.png",
+    "experiments/P4_real_driving/drives/2011_09_26_drive_0002_sync/figs/frame_008.png",
+    "experiments/P4_real_driving/drives/2011_09_26_drive_0002_sync/figs/frame_009.png",
+    "experiments/P4_real_driving/drives/2011_09_26_drive_0002_sync/figs/frame_010.png",
+    "experiments/P4_real_driving/drives/2011_09_26_drive_0002_sync/figs/frame_011.png"
+  ],
+  "final_map": "experiments/P4_real_driving/drives/2011_09_26_drive_0002_sync/figs/bev_final_map.png",
+  "note": "真实 RGB + 真实 LiDAR 输入；VGGT 用 RGB 做视觉定位（up-to-scale），真实 LiDAR 深度定标到度量级；BEV 由真实 LiDAR 反投影累积。基准无逐帧真值位姿，故不报 ATE。"
+}
