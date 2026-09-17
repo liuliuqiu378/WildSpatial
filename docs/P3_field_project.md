@@ -129,7 +129,9 @@ if 主方法在『motion_blur』退化 → 路径长=0（塌缩）:
   - 速度障碍法触发动态避让 **5 步**。
 
 ![托底轨迹建图 + A* 规划](../experiments/P3_flagship_delivery/figs/map_plan.png)
+
 ![差速轮控制指令](../experiments/P3_flagship_delivery/figs/control_cmd.png)
+
 ![动态避障](../experiments/P3_flagship_delivery/figs/dynamic_avoid.png)
 
 ### 5.2 外部真实证据（非合成，证明「不是只在玩具数据上成立」）

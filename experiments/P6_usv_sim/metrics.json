@@ -1,0 +1,76 @@
+{
+  "project": "P6_usv_sim",
+  "title": "USV 内河航道 感知→控制输入 模拟演练（合成数据，[模拟]非真实采集）",
+  "scenario": "内河港口巡检，码头A→B 240m x 160m 航道",
+  "grid": {
+    "shape": [
+      400,
+      600
+    ],
+    "res_m": 0.4,
+    "world_m": [
+      160.0,
+      240.0
+    ]
+  },
+  "cells": {
+    "shore": 48000,
+    "shoal": 1677,
+    "obstacle": 1608,
+    "glare": 8323
+  },
+  "inflation": {
+    "robot_radius_m": 0.5,
+    "margin_m": 0.3,
+    "radius_cells": 2,
+    "inflated_cells": 54573
+  },
+  "moving_boats": [
+    {
+      "name": "boat_A",
+      "cy": 250,
+      "cx": 350,
+      "vy": 0.0,
+      "vx": 0.3
+    },
+    {
+      "name": "boat_B",
+      "cy": 250,
+      "cx": 250,
+      "vy": 0.0,
+      "vx": -0.2
+    }
+  ],
+  "closed_loop": {
+    "start_cell": [
+      200,
+      20
+    ],
+    "goal_cell": [
+      200,
+      580
+    ],
+    "path_steps": 561,
+    "path_length_m": 240.57,
+    "n_cmds": 560,
+    "avoidance_steps": 7,
+    "glare_cells_passed": 0
+  },
+  "localization_sim": {
+    "clean_ate_m": 0.18,
+    "glare_ate_m": 0.85,
+    "fallback_threshold_m": 0.5,
+    "fallback_trigger_glare": 0.55,
+    "note": "与 §6.4 假设一致；clean 点量级参考 TUM fr1/desk VGGT 0.022m"
+  },
+  "figs": {
+    "usv_occupancy_plan": "experiments/P6_usv_sim/figs/usv_occupancy_plan.png",
+    "usv_glare_ate": "experiments/P6_usv_sim/figs/usv_glare_ate.png"
+  },
+  "honest_bounds": [
+    "全部为合成模拟，非真实 USV 采集",
+    "控制为运动学仿真",
+    "真实需出海+RTK真值载荷(见 §8)",
+    "ATE 曲线为假设模型非实测"
+  ]
+}
